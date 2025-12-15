@@ -11,8 +11,8 @@
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2.1,
       "position": [
-        -304,
-        0
+        -336,
+        -416
       ],
       "id": "32fa083f-d9dc-460e-afd2-f9e94365b9d3",
       "name": "Webhook",
@@ -26,8 +26,8 @@
       "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
       "typeVersion": 1,
       "position": [
-        -16,
-        208
+        -48,
+        -208
       ],
       "id": "9b526a62-f315-4937-a3e3-a2974ed72d17",
       "name": "Groq Chat Model",
@@ -50,8 +50,8 @@
       "type": "@n8n/n8n-nodes-langchain.agent",
       "typeVersion": 3,
       "position": [
-        32,
-        0
+        0,
+        -416
       ],
       "id": "6a8a85a8-c2d2-4c5b-b514-a74d81dc43fb",
       "name": "Compliance Check Agent"
@@ -63,8 +63,8 @@
       "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
       "typeVersion": 1.3,
       "position": [
-        208,
-        208
+        176,
+        -208
       ],
       "id": "a7a6bf66-889b-49c8-8268-b8b8c58ca93e",
       "name": "Structured Output Parser"
@@ -129,8 +129,8 @@
       "type": "n8n-nodes-base.switch",
       "typeVersion": 3.3,
       "position": [
-        480,
-        0
+        448,
+        -416
       ],
       "id": "6136a3d8-bc01-4f44-a076-46de853e2db3",
       "name": "Switch"
@@ -148,7 +148,7 @@
       "typeVersion": 3,
       "position": [
         1040,
-        -272
+        -1104
       ],
       "id": "bc964baa-0f56-4bf7-b8a1-594b88b1cea1",
       "name": "Strategy Agent",
@@ -163,7 +163,7 @@
       "typeVersion": 1,
       "position": [
         848,
-        -48
+        -880
       ],
       "id": "05c813c0-f2ad-4434-aaa8-941214b4c0f1",
       "name": "Groq Chat Model1",
@@ -183,7 +183,7 @@
       "typeVersion": 1.3,
       "position": [
         1120,
-        -48
+        -880
       ],
       "id": "74c79b46-8ab7-4e22-a3f5-765aae301271",
       "name": "Postgres Chat Memory",
@@ -193,29 +193,6 @@
           "name": "Postgres account"
         }
       }
-    },
-    {
-      "parameters": {
-        "assignments": {
-          "assignments": [
-            {
-              "id": "93cf43e9-fc47-4834-b81d-81fe653caa13",
-              "name": "output",
-              "value": "I'm sorry, that prompt violates our content policy. I need to ask you to modify your request to align with our usage rules.",
-              "type": "string"
-            }
-          ]
-        },
-        "options": {}
-      },
-      "type": "n8n-nodes-base.set",
-      "typeVersion": 3.4,
-      "position": [
-        1104,
-        448
-      ],
-      "id": "bf6323ab-62aa-4031-9854-09b5015ba308",
-      "name": "Edit Fields"
     },
     {
       "parameters": {
@@ -230,7 +207,7 @@
       "typeVersion": 1.3,
       "position": [
         1264,
-        -48
+        -880
       ],
       "id": "428b4276-a37a-4e6d-9fa0-8d12bdf0eec1",
       "name": "Postgres PGVector Store",
@@ -306,7 +283,7 @@
               },
               {
                 "name": "page_number",
-                "value": "={{ $('Page number').item.json.PageNumber }}"
+                "value": "={{ $('Page number extractor').item.json.PageNumber }}"
               }
             ]
           }
@@ -315,25 +292,11 @@
       "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
       "typeVersion": 1.1,
       "position": [
-        2288,
-        1024
+        2304,
+        1088
       ],
       "id": "80669ec1-20ec-42e1-a65e-177afa5152b1",
       "name": "Default Data Loader"
-    },
-    {
-      "parameters": {
-        "jsCode": "const sorted = $input.all().sort((a, b) => {\n  const matchA = a.json.fileName.match(/\\d+/);\n  const matchB = b.json.fileName.match(/\\d+/);\n  // Extract numbers or default to 0 if no number found\n  const numA = matchA ? parseInt(matchA[0]) : 0;\n  const numB = matchB ? parseInt(matchB[0]) : 0;\n  return numA - numB;\n});\n\nreturn sorted.map(item => {\n  const fileName = item.json.fileName;\n  const PageNumber = fileName.replace(/\\.pdf$/, '').match(/\\d+$/)?.[0] || 0;\n  \n  return {\n    json: {\n      ...item.json,\n      PageNumber\n    },\n    binary: item.binary\n  };\n});"
-      },
-      "type": "n8n-nodes-base.code",
-      "typeVersion": 2,
-      "position": [
-        1280,
-        784
-      ],
-      "id": "ddce9fa6-412d-48d2-a385-20a4c286f82a",
-      "name": "Page number",
-      "executeOnce": false
     },
     {
       "parameters": {
@@ -347,20 +310,6 @@
       ],
       "id": "856c3122-0010-45ec-93dd-4aa4eaf27c2f",
       "name": "book name extractor"
-    },
-    {
-      "parameters": {
-        "jsCode": "const pythonOutput = $input.first().json.stdout || \"\";\n\n// Match after \"Saved: \" and capture everything until line break\nconst filePaths = pythonOutput.match(/Saved:\\s*(.+\\.pdf)/g)?.map(line => line.replace(\"Saved: \", \"\")) || [];\n\n// Convert backslashes to forward slashes\nconst forwardPaths = filePaths.map(path => path.replace(/\\\\/g, \"/\"));\n\n// Replace filenames with wildcard *.pdf using first path\nconst wildcardPath = forwardPaths.length > 0\n    ? forwardPaths[0].replace(/[^\\/]+\\.pdf$/, \"**.pdf\")\n    : \"\";\n\n// Return in n8n format\nreturn [\n    {\n        json: {\n            wildcardPath\n        }\n    }\n];\n\n"
-      },
-      "type": "n8n-nodes-base.code",
-      "typeVersion": 2,
-      "position": [
-        800,
-        784
-      ],
-      "id": "cbff2a88-0127-453f-bfb8-0a9e082025ce",
-      "name": "Code in JavaScript2",
-      "executeOnce": false
     },
     {
       "parameters": {
@@ -429,8 +378,8 @@
       "type": "@n8n/n8n-nodes-langchain.textSplitterTokenSplitter",
       "typeVersion": 1,
       "position": [
-        2288,
-        1200
+        2304,
+        1232
       ],
       "id": "796c0ba3-5d3a-40fd-91e8-22b43c6dc81a",
       "name": "Token Splitter"
@@ -442,8 +391,8 @@
       "type": "@n8n/n8n-nodes-langchain.embeddingsCohere",
       "typeVersion": 1,
       "position": [
-        1264,
-        112
+        1232,
+        -592
       ],
       "id": "0b092c8c-04d8-4400-b0a9-169afedb9011",
       "name": "Embeddings Cohere",
@@ -461,8 +410,8 @@
       "type": "@n8n/n8n-nodes-langchain.rerankerCohere",
       "typeVersion": 1,
       "position": [
-        1440,
-        112
+        1520,
+        -592
       ],
       "id": "d8abe3f2-10ea-4b39-a3ae-2a4060d37b53",
       "name": "Reranker Cohere",
@@ -480,8 +429,8 @@
       "type": "@n8n/n8n-nodes-langchain.embeddingsCohere",
       "typeVersion": 1,
       "position": [
-        2112,
-        1024
+        2096,
+        1152
       ],
       "id": "b97df8ed-8906-44d3-b58f-7a780ede4a01",
       "name": "Embeddings Cohere1",
@@ -494,29 +443,6 @@
     },
     {
       "parameters": {
-        "assignments": {
-          "assignments": [
-            {
-              "id": "dfc8ee4d-84e7-4706-ac9c-feb68a4b9a1c",
-              "name": "text",
-              "value": "={{ $json.text }}",
-              "type": "string"
-            }
-          ]
-        },
-        "options": {}
-      },
-      "type": "n8n-nodes-base.set",
-      "typeVersion": 3.4,
-      "position": [
-        1840,
-        784
-      ],
-      "id": "b7c2d10f-89e1-4cc9-90b2-db6d20511a79",
-      "name": "Edit Fields1"
-    },
-    {
-      "parameters": {
         "model": "openai/gpt-oss-120b",
         "options": {}
       },
@@ -524,7 +450,7 @@
       "typeVersion": 1,
       "position": [
         992,
-        -48
+        -880
       ],
       "id": "23912dd2-c95a-41cc-b95e-68b8596fb8eb",
       "name": "Groq Chat Model2",
@@ -548,7 +474,7 @@
       "typeVersion": 3,
       "position": [
         2048,
-        -272
+        -1104
       ],
       "id": "aa5e0f64-4b38-42bc-b535-89b2a77c381f",
       "name": "Strategy Agent1",
@@ -563,7 +489,7 @@
       "typeVersion": 1,
       "position": [
         1856,
-        -48
+        -880
       ],
       "id": "37676b7c-10cb-4614-9970-a3ecbe038f6e",
       "name": "Groq Chat Model3",
@@ -583,7 +509,7 @@
       "typeVersion": 1.3,
       "position": [
         2128,
-        -48
+        -880
       ],
       "id": "3d6bf769-2a25-4ced-836a-91404ddf5065",
       "name": "Postgres Chat Memory1",
@@ -607,7 +533,7 @@
       "typeVersion": 1.3,
       "position": [
         2272,
-        -48
+        -880
       ],
       "id": "6c7b537b-fc2e-4308-b7a2-ea6b1e0295b8",
       "name": "Postgres PGVector Store2",
@@ -625,8 +551,8 @@
       "type": "@n8n/n8n-nodes-langchain.embeddingsCohere",
       "typeVersion": 1,
       "position": [
-        2272,
-        112
+        2304,
+        -608
       ],
       "id": "79b1f4e2-2468-47f8-9e8e-94ebfd02de40",
       "name": "Embeddings Cohere2",
@@ -644,8 +570,8 @@
       "type": "@n8n/n8n-nodes-langchain.rerankerCohere",
       "typeVersion": 1,
       "position": [
-        2448,
-        112
+        2576,
+        -592
       ],
       "id": "0e92f113-5434-48bf-9539-7ca8b04385b3",
       "name": "Reranker Cohere1",
@@ -665,7 +591,7 @@
       "typeVersion": 1,
       "position": [
         2000,
-        -48
+        -880
       ],
       "id": "49ac3ec6-6126-4646-b6af-1f712f28f7fb",
       "name": "Groq Chat Model4",
@@ -675,6 +601,319 @@
           "name": "Groq account"
         }
       }
+    },
+    {
+      "parameters": {
+        "content": "## Compliance Agent\n",
+        "height": 624,
+        "width": 496,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -128,
+        -624
+      ],
+      "id": "3ca60283-9b2e-49d0-8cfb-745c0ce842fc",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "## If safe route to the agents, if not send an apology",
+        "height": 624,
+        "width": 288,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        368,
+        -624
+      ],
+      "id": "b3bb6f84-6a9b-449e-a000-c29f06c75dde",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "## Rag system to answer the user, it refrences the page and the document name",
+        "height": 624,
+        "width": 880,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        688,
+        -1184
+      ],
+      "id": "1f05b5ff-12a0-48ac-a470-9a480369dea8",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "content": "## A fall back Rag System",
+        "height": 624,
+        "width": 880,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1744,
+        -1184
+      ],
+      "id": "18a2e6a7-6f16-4aa1-a3d7-7640368ae49e",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "content": "## File processing",
+        "height": 304,
+        "width": 2368,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -384,
+        688
+      ],
+      "id": "8d34effa-7a95-4dd0-ac50-8edf9466e8fc",
+      "name": "Sticky Note4"
+    },
+    {
+      "parameters": {
+        "content": "this workflow checks for \"C:/n8n_temp/Input_Books\" if a file have been added it will run a python code to split pages into sperate documents.\n\nThe command expects:\n\n- the code directory, in this case (C:/Users/Hashi/OneDrive/Desktop/split_pdf.py)\n- the local file trigger, in this case (C:/n8n_temp/Input_Books)\n- the output folder directory, in this case (C:/n8n_temp/output_pages)\n\nthis workflow will extract page numbers and document names to be added as metadata to the vector store.\n\nIMPORTANT NOTE:\nthis workflow expects parseable documents",
+        "height": 528,
+        "width": 592
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -976,
+        688
+      ],
+      "id": "cd030e63-60b7-46e4-af42-767a077792f9",
+      "name": "Sticky Note5"
+    },
+    {
+      "parameters": {
+        "content": "## Vector store upload",
+        "height": 304,
+        "width": 608,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1984,
+        688
+      ],
+      "id": "a6654995-a052-46d3-8624-cebeb41fa471",
+      "name": "Sticky Note6"
+    },
+    {
+      "parameters": {
+        "content": "## Cohere embed english v3 (Dim 1024)",
+        "height": 352,
+        "width": 288,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1984,
+        992
+      ],
+      "id": "8a8cac48-d41c-493e-babf-565c3779fcba",
+      "name": "Sticky Note7"
+    },
+    {
+      "parameters": {
+        "content": "## token splitter (chunk 450, overlap 75)",
+        "height": 352,
+        "width": 352,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        2272,
+        992
+      ],
+      "id": "d4f7c29f-d0ae-46d8-b433-cece92e44d38",
+      "name": "Sticky Note8"
+    },
+    {
+      "parameters": {
+        "jsCode": "const sorted = $input.all().sort((a, b) => {\n  const matchA = a.json.fileName.match(/\\d+/);\n  const matchB = b.json.fileName.match(/\\d+/);\n  // Extract numbers or default to 0 if no number found\n  const numA = matchA ? parseInt(matchA[0]) : 0;\n  const numB = matchB ? parseInt(matchB[0]) : 0;\n  return numA - numB;\n});\n\nreturn sorted.map(item => {\n  const fileName = item.json.fileName;\n  const PageNumber = fileName.replace(/\\.pdf$/, '').match(/\\d+$/)?.[0] || 0;\n  \n  return {\n    json: {\n      ...item.json,\n      PageNumber\n    },\n    binary: item.binary\n  };\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1280,
+        784
+      ],
+      "id": "ddce9fa6-412d-48d2-a385-20a4c286f82a",
+      "name": "Page number extractor",
+      "executeOnce": false
+    },
+    {
+      "parameters": {
+        "jsCode": "const pythonOutput = $input.first().json.stdout || \"\";\n\n// Match after \"Saved: \" and capture everything until line break\nconst filePaths = pythonOutput.match(/Saved:\\s*(.+\\.pdf)/g)?.map(line => line.replace(\"Saved: \", \"\")) || [];\n\n// Convert backslashes to forward slashes\nconst forwardPaths = filePaths.map(path => path.replace(/\\\\/g, \"/\"));\n\n// Replace filenames with wildcard *.pdf using first path\nconst wildcardPath = forwardPaths.length > 0\n    ? forwardPaths[0].replace(/[^\\/]+\\.pdf$/, \"**.pdf\")\n    : \"\";\n\n// Return in n8n format\nreturn [\n    {\n        json: {\n            wildcardPath\n        }\n    }\n];\n\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        800,
+        784
+      ],
+      "id": "cbff2a88-0127-453f-bfb8-0a9e082025ce",
+      "name": "output page path",
+      "executeOnce": false
+    },
+    {
+      "parameters": {
+        "content": "## Listens to :\n- test: (http://localhost:5678/webhook-test/strat)\n- production (http://localhost:5678/webhook/strat)",
+        "height": 624,
+        "width": 400,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -528,
+        -624
+      ],
+      "id": "e52ad3ef-8051-46f1-a2cd-b93967dc4953",
+      "name": "Sticky Note9"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "dfc8ee4d-84e7-4706-ac9c-feb68a4b9a1c",
+              "name": "text",
+              "value": "={{ $json.text }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1840,
+        784
+      ],
+      "id": "b7c2d10f-89e1-4cc9-90b2-db6d20511a79",
+      "name": "Isolate extracted text"
+    },
+    {
+      "parameters": {
+        "content": "## In case of violation throw an apology",
+        "height": 288,
+        "width": 384,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        896,
+        -64
+      ],
+      "id": "bfdaba8a-7fca-40fa-baf8-e25da74bfa9d",
+      "name": "Sticky Note10"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "93cf43e9-fc47-4834-b81d-81fe653caa13",
+              "name": "output",
+              "value": "I'm sorry, that prompt violates our content policy. I need to ask you to modify your request to align with our usage rules.",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1040,
+        48
+      ],
+      "id": "bf6323ab-62aa-4031-9854-09b5015ba308",
+      "name": "apology"
+    },
+    {
+      "parameters": {
+        "content": "## Cohere embed english v3 (Dim 1024)",
+        "height": 352,
+        "width": 288,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        2192,
+        -736
+      ],
+      "id": "eb4d9cd6-a21c-4541-9252-8491858613f3",
+      "name": "Sticky Note11"
+    },
+    {
+      "parameters": {
+        "content": "## Cohere reranker V3",
+        "height": 352,
+        "width": 288,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        2480,
+        -736
+      ],
+      "id": "dacafa75-f9e2-425a-91cc-2716c4f14fbf",
+      "name": "Sticky Note12"
+    },
+    {
+      "parameters": {
+        "content": "## Cohere embed english v3 (Dim 1024)",
+        "height": 352,
+        "width": 288,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1120,
+        -736
+      ],
+      "id": "33253dcc-f1b1-42e7-8345-61aad2910924",
+      "name": "Sticky Note13"
+    },
+    {
+      "parameters": {
+        "content": "## Cohere reranker V3",
+        "height": 352,
+        "width": 288,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1408,
+        -736
+      ],
+      "id": "832d01bd-f1a5-4516-9f19-01563427e856",
+      "name": "Sticky Note14"
     }
   ],
   "pinData": {},
@@ -734,7 +973,7 @@
         ],
         [
           {
-            "node": "Edit Fields",
+            "node": "apology",
             "type": "main",
             "index": 0
           }
@@ -789,7 +1028,7 @@
       "main": [
         [
           {
-            "node": "Edit Fields1",
+            "node": "Isolate extracted text",
             "type": "main",
             "index": 0
           }
@@ -807,17 +1046,6 @@
         ]
       ]
     },
-    "Page number": {
-      "main": [
-        [
-          {
-            "node": "Extract from File",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "book name extractor": {
       "main": [
         [
@@ -829,22 +1057,11 @@
         ]
       ]
     },
-    "Code in JavaScript2": {
-      "main": [
-        [
-          {
-            "node": "Read/Write Files from Disk",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "Read/Write Files from Disk": {
       "main": [
         [
           {
-            "node": "Page number",
+            "node": "Page number extractor",
             "type": "main",
             "index": 0
           }
@@ -877,7 +1094,7 @@
       "main": [
         [
           {
-            "node": "Code in JavaScript2",
+            "node": "output page path",
             "type": "main",
             "index": 0
           }
@@ -923,17 +1140,6 @@
           {
             "node": "Postgres PGVector Store1",
             "type": "ai_embedding",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Edit Fields1": {
-      "main": [
-        [
-          {
-            "node": "Postgres PGVector Store1",
-            "type": "main",
             "index": 0
           }
         ]
@@ -1026,13 +1232,51 @@
           }
         ]
       ]
+    },
+    "Page number extractor": {
+      "main": [
+        [
+          {
+            "node": "Extract from File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "output page path": {
+      "main": [
+        [
+          {
+            "node": "Read/Write Files from Disk",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Isolate extracted text": {
+      "main": [
+        [
+          {
+            "node": "Postgres PGVector Store1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Strategy Agent1": {
+      "main": [
+        []
+      ]
     }
   },
   "active": true,
   "settings": {
     "executionOrder": "v1"
   },
-  "versionId": "de837669-5152-479a-b53e-992a7e5afe8e",
+  "versionId": "6d658de0-a5a8-4fca-b182-a8877424414c",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "1cf2b5bf4318a23a63d29974a6dba88a1ee4ca1760f440473397926025aaad84"
