@@ -7,387 +7,460 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600&display=swap" rel="stylesheet">
+    
+    <!-- Dark mode styles will be added here -->
     <style>
+        :root {
+            /* Light mode colors */
+            --bg-primary: linear-gradient(135deg, #E8F4F2 0%, #EDF6F9 100%);
+            --bg-secondary: rgba(255, 255, 255, 0.7);
+            --bg-card: rgba(255, 255, 255, 0.6);
+            --text-primary: #2C5F5D;
+            --text-secondary: #4A7B79;
+            --text-muted: #8FA5A3;
+            --accent-primary: #7EC9A0;
+            --accent-secondary: #5DB0A9;
+            --border-color: rgba(126, 201, 160, 0.15);
+            --shadow-color: rgba(126, 201, 160, 0.08);
+            --button-bg: linear-gradient(135deg, #7EC9A0, #5DB0A9);
+            --button-hover: linear-gradient(135deg, #6DB890, #4A9B95);
+            --code-bg: rgba(126, 201, 160, 0.15);
+            --thinking-bg: rgba(126, 201, 160, 0.12);
+            --user-message-bg: rgba(126, 201, 160, 0.15);
+            --user-message-border: rgba(126, 201, 160, 0.25);
+        }
+
+        [data-theme="dark"] {
+            /* Dark mode colors using TETCO brand colors */
+            --bg-primary: linear-gradient(135deg, #0C3C44 0%, #1A2D33 100%);
+            --bg-secondary: rgba(12, 60, 68, 0.8);
+            --bg-card: rgba(12, 60, 68, 0.6);
+            --text-primary: #E8F4F2;
+            --text-secondary: #B8D4D1;
+            --text-muted: #7A9A97;
+            --accent-primary: #36BA91;
+            --accent-secondary: #005F96;
+            --border-color: rgba(54, 186, 145, 0.3);
+            --shadow-color: rgba(0, 95, 150, 0.15);
+            --button-bg: linear-gradient(135deg, #36BA91, #005F96);
+            --button-hover: linear-gradient(135deg, #2DA67E, #004D78);
+            --code-bg: rgba(54, 186, 145, 0.2);
+            --thinking-bg: rgba(54, 186, 145, 0.15);
+            --user-message-bg: rgba(54, 186, 145, 0.2);
+            --user-message-border: rgba(54, 186, 145, 0.4);
+        }
+
         * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-body {
-    font-family: 'IBM Plex Sans Arabic', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    background: #0C3C44;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    color: #E8F0F0;
-}
+        body {
+            font-family: 'IBM Plex Sans Arabic', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--bg-primary);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            color: var(--text-primary);
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
 
-.header {
-    background: rgba(12, 60, 68, 0.98);
-    backdrop-filter: blur(20px);
-    padding: 20px 40px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-bottom: 2px solid #36BA91;
-    position: sticky;
-    top: 0;
-    z-index: 100;
-}
+        .header {
+            background: var(--bg-secondary);
+            backdrop-filter: blur(20px);
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 16px var(--shadow-color);
+            transition: background-color 0.3s ease, border-color 0.3s ease;
+        }
 
-.logo {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    color: #FFFFFF;
-    font-size: 20px;
-    font-weight: 600;
-}
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            color: var(--text-primary);
+            font-size: 20px;
+            font-weight: 600;
+        }
 
-.logo-icon {
-    width: 48px;
-    height: 48px;
-    background: linear-gradient(135deg, #36BA91, #005F96);
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
+        .logo-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--button-bg);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px var(--shadow-color);
+            transition: background 0.3s ease;
+        }
 
-.logo-icon svg {
-    width: 28px;
-    height: 28px;
-    fill: white;
-}
+        .logo-icon svg {
+            width: 28px;
+            height: 28px;
+            fill: white;
+        }
 
-.status {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    color: #7EC9A0;
-    font-size: 14px;
-    font-weight: 500;
-}
+        .status {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--accent-secondary);
+            font-size: 14px;
+            font-weight: 500;
+        }
 
-.status-dot {
-    width: 10px;
-    height: 10px;
-    background: #36BA91;
-    border-radius: 50%;
-    animation: pulse 2s infinite;
-}
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            background: var(--accent-primary);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
 
-@keyframes pulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.5; }
-}
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
 
-.chat-container {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    max-width: 1000px;
-    width: 100%;
-    margin: 0 auto;
-    padding: 32px;
-    overflow: hidden;
-}
+        .chat-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            max-width: 1000px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 32px;
+            overflow: hidden;
+        }
 
-.welcome-message {
-    background: linear-gradient(135deg, #73B0E0, #7EC9A0);
-    border: 3px solid #005F96;
-    border-radius: 16px;
-    padding: 40px;
-    margin-bottom: 32px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
-}
+        .welcome-message {
+            background: var(--bg-card);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 32px;
+            box-shadow: 0 8px 32px var(--shadow-color);
+            transition: background-color 0.3s ease, border-color 0.3s ease;
+        }
 
-.welcome-message h2 {
-    font-size: 32px;
-    margin-bottom: 16px;
-    color: #0C3C44;
-    font-weight: 700;
-    text-shadow: 0 1px 2px rgba(255, 255, 255, 0.3);
-}
+        .welcome-message h2 {
+            font-size: 32px;
+            margin-bottom: 16px;
+            color: var(--accent-secondary);
+            font-weight: 600;
+        }
 
-.welcome-message p {
-    font-size: 16px;
-    line-height: 1.7;
-    color: #0C3C44;
-    margin-bottom: 32px;
-    font-weight: 500;
-}
+        .welcome-message p {
+            font-size: 16px;
+            line-height: 1.7;
+            color: var(--text-secondary);
+            margin-bottom: 32px;
+        }
 
-.quick-actions {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 16px;
-}
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 16px;
+        }
 
-.quick-btn {
-    background: linear-gradient(135deg, #36BA91, #7EC9A0);
-    border: 2px solid #005F96;
-    padding: 18px 20px;
-    border-radius: 12px;
-    color: #0C3C44;
-    cursor: pointer;
-    transition: all 0.3s;
-    font-size: 15px;
-    text-align: left;
-    font-family: inherit;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    font-weight: 600;
-}
+        .quick-btn {
+            background: var(--thinking-bg);
+            border: 1px solid var(--border-color);
+            padding: 18px 20px;
+            border-radius: 14px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 15px;
+            text-align: left;
+            font-family: inherit;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
 
-.quick-btn:hover {
-    background: linear-gradient(135deg, #005F96, #36BA91);
-    color: #FFFFFF;
-    border-color: #36BA91;
-    transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba(54, 186, 145, 0.4);
-}
+        .quick-btn:hover {
+            background: var(--user-message-bg);
+            border-color: var(--accent-primary);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px var(--shadow-color);
+        }
 
-.quick-btn svg {
-    width: 20px;
-    height: 20px;
-    stroke: #0C3C44;
-    flex-shrink: 0;
-}
+        .quick-btn svg {
+            width: 20px;
+            height: 20px;
+            stroke: var(--accent-secondary);
+            flex-shrink: 0;
+        }
 
-.quick-btn:hover svg {
-    stroke: #FFFFFF;
-}
+        .messages-area {
+            flex: 1;
+            overflow-y: auto;
+            padding: 24px 0;
+            margin-bottom: 24px;
+        }
 
-.messages-area {
-    flex: 1;
-    overflow-y: auto;
-    padding: 24px 0;
-    margin-bottom: 24px;
-}
+        .messages-area::-webkit-scrollbar {
+            width: 8px;
+        }
 
-.messages-area::-webkit-scrollbar {
-    width: 8px;
-}
+        .messages-area::-webkit-scrollbar-track {
+            background: transparent;
+        }
 
-.messages-area::-webkit-scrollbar-track {
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 4px;
-}
+        .messages-area::-webkit-scrollbar-thumb {
+            background: var(--accent-primary);
+            border-radius: 4px;
+            opacity: 0.3;
+        }
 
-.messages-area::-webkit-scrollbar-thumb {
-    background: #36BA91;
-    border-radius: 4px;
-}
+        .message {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 28px;
+            animation: slideIn 0.3s ease-out;
+        }
 
-.message {
-    display: flex;
-    gap: 16px;
-    margin-bottom: 28px;
-    animation: slideIn 0.3s ease-out;
-}
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
 
-@keyframes slideIn {
-    from {
-        opacity: 0;
-        transform: translateY(10px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
+        .message.user {
+            flex-direction: row-reverse;
+        }
 
-.message.user {
-    flex-direction: row-reverse;
-}
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            background: var(--thinking-bg);
+            border: 2px solid var(--border-color);
+        }
 
-.avatar {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    background: #36BA91;
-    border: 3px solid #7EC9A0;
-}
+        .avatar svg {
+            width: 20px;
+            height: 20px;
+            stroke: var(--accent-secondary);
+        }
 
-.avatar svg {
-    width: 20px;
-    height: 20px;
-    stroke: #FFFFFF;
-}
+        .message.user .avatar {
+            background: var(--user-message-bg);
+            border-color: var(--user-message-border);
+        }
 
-.message.user .avatar {
-    background: #005F96;
-    border-color: #73B0E0;
-}
+        .message.user .avatar svg {
+            stroke: var(--accent-primary);
+        }
 
-.message.user .avatar svg {
-    stroke: #FFFFFF;
-}
+        .message-content {
+            max-width: 75%;
+            padding: 16px 20px;
+            border-radius: 18px;
+            line-height: 1.7;
+            font-size: 15px;
+            transition: background-color 0.3s ease, border-color 0.3s ease;
+        }
 
-.message-content {
-    max-width: 75%;
-    padding: 16px 20px;
-    border-radius: 16px;
-    line-height: 1.7;
-    font-size: 15px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-}
+        .message.assistant .message-content {
+            background: var(--bg-card);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            box-shadow: 0 2px 12px var(--shadow-color);
+        }
 
-.message.assistant .message-content {
-    background: #73B0E0;
-    border: 2px solid #005F96;
-    color: #0C3C44;
-    font-weight: 600;
-}
+        .message.user .message-content {
+            background: var(--user-message-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--user-message-border);
+            color: var(--text-primary);
+        }
 
-.message.user .message-content {
-    background: #005F96;
-    border: 2px solid #36BA91;
-    color: #FFFFFF;
-    font-weight: 600;
-}
+        .message-content strong {
+            font-weight: 600;
+            color: var(--accent-secondary);
+        }
 
-.message-content strong {
-    font-weight: 700;
-    color: #005F96;
-}
+        .message-content code {
+            background: var(--code-bg);
+            padding: 3px 8px;
+            border-radius: 6px;
+            font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
 
-.message.user .message-content strong {
-    color: #EBE841;
-}
+        .thinking-process {
+            background: var(--thinking-bg);
+            border-left: 3px solid var(--accent-primary);
+            padding: 14px 16px;
+            margin: 12px 0;
+            border-radius: 10px;
+            font-size: 14px;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
 
-.message-content code {
-    background: rgba(255, 255, 255, 0.4);
-    padding: 3px 8px;
-    border-radius: 4px;
-    font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace;
-    font-size: 14px;
-    color: #0C3C44;
-    font-weight: 700;
-    border: 1px solid rgba(12, 60, 68, 0.3);
-}
+        .thinking-process svg {
+            width: 18px;
+            height: 18px;
+            stroke: var(--accent-primary);
+            animation: spin 2s linear infinite;
+        }
 
-.message.user .message-content code {
-    background: rgba(235, 232, 65, 0.3);
-    color: #FFFFFF;
-    border-color: #EBE841;
-}
+        @keyframes spin {
+            100% { transform: rotate(360deg); }
+        }
 
-.thinking-process {
-    background: linear-gradient(135deg, #7EC9A0, #73B0E0);
-    border-left: 4px solid #36BA91;
-    padding: 14px 16px;
-    margin: 12px 0;
-    border-radius: 8px;
-    font-size: 14px;
-    color: #0C3C44;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-weight: 600;
-}
+        .timestamp {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 8px;
+        }
 
-.thinking-process svg {
-    width: 18px;
-    height: 18px;
-    stroke: #0C3C44;
-    animation: spin 2s linear infinite;
-}
+        .input-area {
+            display: flex;
+            gap: 12px;
+            background: var(--bg-secondary);
+            backdrop-filter: blur(20px);
+            padding: 20px;
+            border-radius: 20px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 4px 24px var(--shadow-color);
+            transition: background-color 0.3s ease, border-color 0.3s ease;
+        }
 
-@keyframes spin {
-    100% { transform: rotate(360deg); }
-}
+        .input-wrapper {
+            flex: 1;
+            position: relative;
+        }
 
-.timestamp {
-    font-size: 12px;
-    color: #0C3C44;
-    margin-top: 8px;
-    font-weight: 600;
-}
+        #messageInput {
+            width: 100%;
+            padding: 14px 18px;
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            background: var(--bg-card);
+            color: var(--text-primary);
+            font-size: 15px;
+            outline: none;
+            transition: all 0.3s;
+            font-family: inherit;
+        }
 
-.message.user .timestamp {
-    color: #D2D2D2;
-}
+        #messageInput:focus {
+            border-color: var(--accent-primary);
+            background: var(--bg-secondary);
+            box-shadow: 0 0 0 3px rgba(54, 186, 145, 0.1);
+        }
 
-.input-area {
-    display: flex;
-    gap: 12px;
-    background: linear-gradient(135deg, #73B0E0, #7EC9A0);
-    padding: 20px;
-    border-radius: 16px;
-    border: 3px solid #005F96;
-    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
-}
+        #messageInput::placeholder {
+            color: var(--text-muted);
+        }
 
-.input-wrapper {
-    flex: 1;
-    position: relative;
-}
+        #sendBtn {
+            padding: 14px 28px;
+            background: var(--button-bg);
+            color: #FFFFFF;
+            border: none;
+            border-radius: 14px;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-family: inherit;
+            box-shadow: 0 4px 16px var(--shadow-color);
+        }
 
-#messageInput {
-    width: 100%;
-    padding: 14px 18px;
-    border: 2px solid #005F96;
-    border-radius: 12px;
-    background: #FFFFFF;
-    color: #0C3C44;
-    font-size: 15px;
-    outline: none;
-    transition: all 0.3s;
-    font-family: inherit;
-    font-weight: 500;
-}
+        #sendBtn:hover {
+            background: var(--button-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px var(--shadow-color);
+        }
 
-#messageInput:focus {
-    border-color: #36BA91;
-    background: #FFFFFF;
-    box-shadow: 0 0 0 4px rgba(54, 186, 145, 0.3);
-}
+        #sendBtn:active {
+            transform: scale(0.98);
+        }
 
-#messageInput::placeholder {
-    color: #6A63AC;
-    font-weight: 400;
-}
+        #sendBtn svg {
+            width: 18px;
+            height: 18px;
+            stroke: white;
+        }
 
-#sendBtn {
-    padding: 14px 28px;
-    background: linear-gradient(135deg, #005F96, #36BA91);
-    color: #FFFFFF;
-    border: none;
-    border-radius: 12px;
-    cursor: pointer;
-    font-size: 15px;
-    font-weight: 700;
-    transition: all 0.3s;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-family: inherit;
-    box-shadow: 0 4px 12px rgba(0, 95, 150, 0.4);
-}
+        /* Dark mode toggle button */
+        .theme-toggle {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 50px;
+            padding: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            width: 48px;
+            height: 48px;
+        }
 
-#sendBtn:hover {
-    background: linear-gradient(135deg, #36BA91, #005F96);
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(54, 186, 145, 0.5);
-}
+        .theme-toggle:hover {
+            background: var(--thinking-bg);
+            transform: scale(1.05);
+        }
 
-#sendBtn:active {
-    transform: scale(0.98);
-}
+        .theme-toggle svg {
+            width: 24px;
+            height: 24px;
+            stroke: var(--accent-secondary);
+            transition: transform 0.3s ease;
+        }
 
-#sendBtn svg {
-    width: 18px;
-    height: 18px;
-    stroke: white;
-}
+        .theme-toggle:hover svg {
+            transform: rotate(180deg);
+        }
+
+        /* Sun icon for light mode */
+        .sun-icon {
+            display: none;
+        }
+
+        [data-theme="dark"] .sun-icon {
+            display: block;
+        }
+
+        [data-theme="dark"] .moon-icon {
+            display: none;
+        }
+
+        /* Smooth transitions for theme switching */
+        * {
+            transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
+        }
     </style>
 </head>
 <body>
@@ -402,9 +475,32 @@ body {
             </div>
             <span>TETCO Strategy Assistant</span>
         </div>
-        <div class="status">
-            <div class="status-dot"></div>
-            <span>Online</span>
+        
+        <!-- Theme toggle button added here -->
+        <div style="display: flex; align-items: center; gap: 16px;">
+            <button class="theme-toggle" id="themeToggle" title="Toggle dark mode">
+                <!-- Moon icon for dark mode -->
+                <svg class="moon-icon" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                </svg>
+                <!-- Sun icon for light mode -->
+                <svg class="sun-icon" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="5"></circle>
+                    <line x1="12" y1="1" x2="12" y2="3"></line>
+                    <line x1="12" y1="21" x2="12" y2="23"></line>
+                    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                    <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                    <line x1="1" y1="12" x2="3" y2="12"></line>
+                    <line x1="21" y1="12" x2="23" y2="12"></line>
+                    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                    <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                </svg>
+            </button>
+            
+            <div class="status">
+                <div class="status-dot"></div>
+                <span>Online</span>
+            </div>
         </div>
     </div>
 
@@ -475,6 +571,23 @@ body {
     </div>
 
     <script>
+        // Theme toggle functionality
+        const themeToggle = document.getElementById('themeToggle');
+        const html = document.documentElement;
+
+        // Check for saved theme preference or default to light mode
+        const currentTheme = localStorage.getItem('theme') || 'light';
+        html.setAttribute('data-theme', currentTheme);
+
+        themeToggle.addEventListener('click', () => {
+            const currentTheme = html.getAttribute('data-theme');
+            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+            
+            html.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+        });
+
+        // Rest of the existing JavaScript code...
         const messagesArea = document.getElementById('messagesArea');
         const messageInput = document.getElementById('messageInput');
         const sendBtn = document.getElementById('sendBtn');
