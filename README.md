@@ -3,4 +3,5 @@
 - to be added or changed:
 
 - python services for fallbacks
-- webpage coloring
+
+- after receiving the data, apply preprocessing
