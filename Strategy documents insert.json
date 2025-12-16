@@ -1,0 +1,477 @@
+{
+  "name": "Strategy documents insert",
+  "nodes": [
+    {
+      "parameters": {
+        "triggerOn": "folder",
+        "path": "C:/n8n_temp/Input_Books",
+        "events": [
+          "add"
+        ],
+        "options": {}
+      },
+      "type": "n8n-nodes-base.localFileTrigger",
+      "typeVersion": 1,
+      "position": [
+        -224,
+        80
+      ],
+      "id": "dc3095a3-0456-413c-a059-3f0a7cda8030",
+      "name": "Local File Trigger"
+    },
+    {
+      "parameters": {
+        "operation": "pdf",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1.1,
+      "position": [
+        1616,
+        80
+      ],
+      "id": "02355437-58f4-4cee-b9cc-1ead458ce17d",
+      "name": "Extract from File"
+    },
+    {
+      "parameters": {
+        "mode": "insert",
+        "tableName": "mock_strat",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStorePGVector",
+      "typeVersion": 1.3,
+      "position": [
+        2224,
+        80
+      ],
+      "id": "175a5f9b-232b-4e7e-b790-090c49224092",
+      "name": "Postgres PGVector Store1",
+      "credentials": {
+        "postgres": {
+          "id": "g715j0DBduIFVWWL",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "textSplittingMode": "custom",
+        "options": {
+          "metadata": {
+            "metadataValues": [
+              {
+                "name": "book_name",
+                "value": "={{ $('book name extractor').item.json.bookName }}"
+              },
+              {
+                "name": "page_number",
+                "value": "={{ $('Page number extractor').item.json.PageNumber }}"
+              }
+            ]
+          }
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
+      "typeVersion": 1.1,
+      "position": [
+        2368,
+        384
+      ],
+      "id": "51818483-f7e8-4e99-b3d2-db8ad52148fc",
+      "name": "Default Data Loader"
+    },
+    {
+      "parameters": {
+        "jsCode": "const fileName = $input.first().json.fileName;   // e.g. \"C:/n8n_temp/Input_Books/biology 1.pdf\"\n\n// Remove extension\nconst bookName = fileName.replace(/\\.[^/.]+$/, \"\");\n\nreturn {\n  bookName,\n  fileName\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        416,
+        80
+      ],
+      "id": "06ec1132-cd0c-49bc-b46b-a537badb4bf7",
+      "name": "book name extractor"
+    },
+    {
+      "parameters": {
+        "fileSelector": "={{ $json.wildcardPath }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1,
+      "position": [
+        1104,
+        80
+      ],
+      "id": "a076030c-d616-4239-860a-5479a4050c4b",
+      "name": "Read/Write Files from Disk",
+      "alwaysOutputData": true,
+      "executeOnce": false
+    },
+    {
+      "parameters": {
+        "fileSelector": "={{ $json.path }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1,
+      "position": [
+        208,
+        80
+      ],
+      "id": "ce3571d4-7c98-4951-9b4a-8e19723c2bd1",
+      "name": "Read from Disk 2",
+      "alwaysOutputData": true,
+      "notesInFlow": false
+    },
+    {
+      "parameters": {
+        "jsCode": "let path = $input.first().json.path;\n\n// Replace all backslashes with forward slashes\nlet newPath = path.replace(/\\\\/g, \"/\");\n\nconsole.log(newPath);\nreturn [\n  {\n    json: {\n      path: newPath\n    }\n  }\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        0,
+        80
+      ],
+      "id": "41dc74cd-8df8-4ad5-9a7f-4ca3c1138fca",
+      "name": "Replace \\ with /"
+    },
+    {
+      "parameters": {
+        "command": "=python \"C:/Users/Hashi/OneDrive/Desktop/split_pdf.py\" \"{{ $('Local File Trigger').item.json.path }}\" \"C:/n8n_temp/output_pages\"\n "
+      },
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        624,
+        80
+      ],
+      "id": "2844f110-bb35-443a-b8d5-b333fb3292cc",
+      "name": "Execute Command",
+      "executeOnce": false
+    },
+    {
+      "parameters": {
+        "chunkSize": 450,
+        "chunkOverlap": 70
+      },
+      "type": "@n8n/n8n-nodes-langchain.textSplitterTokenSplitter",
+      "typeVersion": 1,
+      "position": [
+        2368,
+        528
+      ],
+      "id": "691c8813-b3be-44ca-9b52-50168c2d6627",
+      "name": "Token Splitter"
+    },
+    {
+      "parameters": {
+        "modelName": "embed-english-v3.0"
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsCohere",
+      "typeVersion": 1,
+      "position": [
+        2160,
+        448
+      ],
+      "id": "406a41f8-d197-46ef-904b-e9abea29261c",
+      "name": "Embeddings Cohere1",
+      "credentials": {
+        "cohereApi": {
+          "id": "lGlTjBD139A2c2yP",
+          "name": "CohereApi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## File processing",
+        "height": 304,
+        "width": 2368,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -320,
+        -16
+      ],
+      "id": "76144869-6884-467a-a7a3-675579f4fcde",
+      "name": "Sticky Note4"
+    },
+    {
+      "parameters": {
+        "content": "this workflow checks for \"C:/n8n_temp/Input_Books\" if a file have been added it will run a python code to split pages into sperate documents.\n\nThe command expects:\n\n- the code directory, in this case (C:/Users/Hashi/OneDrive/Desktop/split_pdf.py)\n- the local file trigger, in this case (C:/n8n_temp/Input_Books)\n- the output folder directory, in this case (C:/n8n_temp/output_pages)\n\nthis workflow will extract page numbers and document names to be added as metadata to the vector store.\n\nIMPORTANT NOTE:\nthis workflow expects parseable documents",
+        "height": 528,
+        "width": 592
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -912,
+        -16
+      ],
+      "id": "3f51db48-c66b-491a-8b4c-bbdf5bad81c2",
+      "name": "Sticky Note5"
+    },
+    {
+      "parameters": {
+        "content": "## Vector store upload",
+        "height": 304,
+        "width": 608,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        2048,
+        -16
+      ],
+      "id": "71d0a950-5668-40c2-b2c3-c83f09047cc7",
+      "name": "Sticky Note6"
+    },
+    {
+      "parameters": {
+        "content": "## Cohere embed english v3 (Dim 1024)",
+        "height": 352,
+        "width": 288,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        2048,
+        288
+      ],
+      "id": "7e9f04ff-9f21-470a-803b-4467da0a81b2",
+      "name": "Sticky Note7"
+    },
+    {
+      "parameters": {
+        "content": "## token splitter (chunk 450, overlap 75)",
+        "height": 352,
+        "width": 352,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        2336,
+        288
+      ],
+      "id": "1777cf58-a537-4f55-86f1-fa6efebbc971",
+      "name": "Sticky Note8"
+    },
+    {
+      "parameters": {
+        "jsCode": "const sorted = $input.all().sort((a, b) => {\n  const matchA = a.json.fileName.match(/\\d+/);\n  const matchB = b.json.fileName.match(/\\d+/);\n  // Extract numbers or default to 0 if no number found\n  const numA = matchA ? parseInt(matchA[0]) : 0;\n  const numB = matchB ? parseInt(matchB[0]) : 0;\n  return numA - numB;\n});\n\nreturn sorted.map(item => {\n  const fileName = item.json.fileName;\n  const PageNumber = fileName.replace(/\\.pdf$/, '').match(/\\d+$/)?.[0] || 0;\n  \n  return {\n    json: {\n      ...item.json,\n      PageNumber\n    },\n    binary: item.binary\n  };\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1344,
+        80
+      ],
+      "id": "5b9964de-8310-439a-95c0-1a38addd5a95",
+      "name": "Page number extractor",
+      "executeOnce": false
+    },
+    {
+      "parameters": {
+        "jsCode": "const pythonOutput = $input.first().json.stdout || \"\";\n\n// Match after \"Saved: \" and capture everything until line break\nconst filePaths = pythonOutput.match(/Saved:\\s*(.+\\.pdf)/g)?.map(line => line.replace(\"Saved: \", \"\")) || [];\n\n// Convert backslashes to forward slashes\nconst forwardPaths = filePaths.map(path => path.replace(/\\\\/g, \"/\"));\n\n// Replace filenames with wildcard *.pdf using first path\nconst wildcardPath = forwardPaths.length > 0\n    ? forwardPaths[0].replace(/[^\\/]+\\.pdf$/, \"**.pdf\")\n    : \"\";\n\n// Return in n8n format\nreturn [\n    {\n        json: {\n            wildcardPath\n        }\n    }\n];\n\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        864,
+        80
+      ],
+      "id": "1ab81090-5d30-4cbf-9a83-5186a97c7a7b",
+      "name": "output page path",
+      "executeOnce": false
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "dfc8ee4d-84e7-4706-ac9c-feb68a4b9a1c",
+              "name": "text",
+              "value": "={{ $json.text }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1904,
+        80
+      ],
+      "id": "b81b7aa0-9035-47e3-a0b1-45acdda26b73",
+      "name": "Isolate extracted text"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Local File Trigger": {
+      "main": [
+        [
+          {
+            "node": "Replace \\ with /",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract from File": {
+      "main": [
+        [
+          {
+            "node": "Isolate extracted text",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Default Data Loader": {
+      "ai_document": [
+        [
+          {
+            "node": "Postgres PGVector Store1",
+            "type": "ai_document",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "book name extractor": {
+      "main": [
+        [
+          {
+            "node": "Execute Command",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read/Write Files from Disk": {
+      "main": [
+        [
+          {
+            "node": "Page number extractor",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read from Disk 2": {
+      "main": [
+        [
+          {
+            "node": "book name extractor",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Replace \\ with /": {
+      "main": [
+        [
+          {
+            "node": "Read from Disk 2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute Command": {
+      "main": [
+        [
+          {
+            "node": "output page path",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Token Splitter": {
+      "ai_textSplitter": [
+        [
+          {
+            "node": "Default Data Loader",
+            "type": "ai_textSplitter",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings Cohere1": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Postgres PGVector Store1",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Page number extractor": {
+      "main": [
+        [
+          {
+            "node": "Extract from File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "output page path": {
+      "main": [
+        [
+          {
+            "node": "Read/Write Files from Disk",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Isolate extracted text": {
+      "main": [
+        [
+          {
+            "node": "Postgres PGVector Store1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "53d50065-91bd-4b33-bccc-a65478a013c2",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "1cf2b5bf4318a23a63d29974a6dba88a1ee4ca1760f440473397926025aaad84"
+  },
+  "id": "x8rr7m7BLRqRKycF",
+  "tags": []
+}
