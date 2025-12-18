@@ -2,8 +2,8 @@
 
 - to be added or changed:
 
-- python services for fallbacks
+1. python services for fallbacks
 
-- after receiving the data, apply preprocessing
+2. after receiving the data, apply preprocessing
 
-** also try Kimi K2 for the front end, it does a great job with high context lenght. **
+3. update the front-end to display the correct time stamp
