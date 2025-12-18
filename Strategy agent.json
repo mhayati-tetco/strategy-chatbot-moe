@@ -4,7 +4,7 @@
     {
       "parameters": {
         "httpMethod": "POST",
-        "path": "strat",
+        "path": "chat",
         "responseMode": "lastNode",
         "options": {}
       },
@@ -152,7 +152,7 @@
       ],
       "id": "bc964baa-0f56-4bf7-b8a1-594b88b1cea1",
       "name": "Strategy Agent",
-      "onError": "continueRegularOutput"
+      "onError": "continueErrorOutput"
     },
     {
       "parameters": {
@@ -177,7 +177,7 @@
     {
       "parameters": {
         "sessionIdType": "customKey",
-        "sessionKey": "={{ $('Webhook').item.json.body.sessionId }}"
+        "sessionKey": "={{ $('Webhook').item.json.body.chatId }}"
       },
       "type": "@n8n/n8n-nodes-langchain.memoryPostgresChat",
       "typeVersion": 1.3,
@@ -220,172 +220,6 @@
     },
     {
       "parameters": {
-        "triggerOn": "folder",
-        "path": "C:/n8n_temp/Input_Books",
-        "events": [
-          "add"
-        ],
-        "options": {}
-      },
-      "type": "n8n-nodes-base.localFileTrigger",
-      "typeVersion": 1,
-      "position": [
-        -288,
-        784
-      ],
-      "id": "546ef160-83cf-4dc7-b7f8-44dd5563ccb6",
-      "name": "Local File Trigger"
-    },
-    {
-      "parameters": {
-        "operation": "pdf",
-        "options": {}
-      },
-      "type": "n8n-nodes-base.extractFromFile",
-      "typeVersion": 1.1,
-      "position": [
-        1552,
-        784
-      ],
-      "id": "da5b38bf-69f4-406e-84ca-aa76451531d4",
-      "name": "Extract from File"
-    },
-    {
-      "parameters": {
-        "mode": "insert",
-        "tableName": "mock_strat",
-        "options": {}
-      },
-      "type": "@n8n/n8n-nodes-langchain.vectorStorePGVector",
-      "typeVersion": 1.3,
-      "position": [
-        2160,
-        784
-      ],
-      "id": "f6d61689-e35c-4324-844d-3eaf19ea945f",
-      "name": "Postgres PGVector Store1",
-      "credentials": {
-        "postgres": {
-          "id": "g715j0DBduIFVWWL",
-          "name": "Postgres account"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "textSplittingMode": "custom",
-        "options": {
-          "metadata": {
-            "metadataValues": [
-              {
-                "name": "book_name",
-                "value": "={{ $('book name extractor').item.json.bookName }}"
-              },
-              {
-                "name": "page_number",
-                "value": "={{ $('Page number extractor').item.json.PageNumber }}"
-              }
-            ]
-          }
-        }
-      },
-      "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
-      "typeVersion": 1.1,
-      "position": [
-        2304,
-        1088
-      ],
-      "id": "80669ec1-20ec-42e1-a65e-177afa5152b1",
-      "name": "Default Data Loader"
-    },
-    {
-      "parameters": {
-        "jsCode": "const fileName = $input.first().json.fileName;   // e.g. \"C:/n8n_temp/Input_Books/biology 1.pdf\"\n\n// Remove extension\nconst bookName = fileName.replace(/\\.[^/.]+$/, \"\");\n\nreturn {\n  bookName,\n  fileName\n};"
-      },
-      "type": "n8n-nodes-base.code",
-      "typeVersion": 2,
-      "position": [
-        352,
-        784
-      ],
-      "id": "856c3122-0010-45ec-93dd-4aa4eaf27c2f",
-      "name": "book name extractor"
-    },
-    {
-      "parameters": {
-        "fileSelector": "={{ $json.wildcardPath }}",
-        "options": {}
-      },
-      "type": "n8n-nodes-base.readWriteFile",
-      "typeVersion": 1,
-      "position": [
-        1040,
-        784
-      ],
-      "id": "c306e2f4-0631-4efd-a88a-f03da03b67e0",
-      "name": "Read/Write Files from Disk",
-      "alwaysOutputData": true,
-      "executeOnce": false
-    },
-    {
-      "parameters": {
-        "fileSelector": "={{ $json.path }}",
-        "options": {}
-      },
-      "type": "n8n-nodes-base.readWriteFile",
-      "typeVersion": 1,
-      "position": [
-        144,
-        784
-      ],
-      "id": "f43128db-f04c-46a5-8543-3d5a2efabbb3",
-      "name": "Read from Disk 2",
-      "alwaysOutputData": true,
-      "notesInFlow": false
-    },
-    {
-      "parameters": {
-        "jsCode": "let path = $input.first().json.path;\n\n// Replace all backslashes with forward slashes\nlet newPath = path.replace(/\\\\/g, \"/\");\n\nconsole.log(newPath);\nreturn [\n  {\n    json: {\n      path: newPath\n    }\n  }\n];\n"
-      },
-      "type": "n8n-nodes-base.code",
-      "typeVersion": 2,
-      "position": [
-        -64,
-        784
-      ],
-      "id": "7ea28c74-328d-4b55-b6f8-038607cf0604",
-      "name": "Replace \\ with /"
-    },
-    {
-      "parameters": {
-        "command": "=python \"C:/Users/Hashi/OneDrive/Desktop/split_pdf.py\" \"{{ $('Local File Trigger').item.json.path }}\" \"C:/n8n_temp/output_pages\"\n "
-      },
-      "type": "n8n-nodes-base.executeCommand",
-      "typeVersion": 1,
-      "position": [
-        560,
-        784
-      ],
-      "id": "c4a39656-680c-42f5-90e8-020d06f7b1d4",
-      "name": "Execute Command",
-      "executeOnce": false
-    },
-    {
-      "parameters": {
-        "chunkSize": 450,
-        "chunkOverlap": 70
-      },
-      "type": "@n8n/n8n-nodes-langchain.textSplitterTokenSplitter",
-      "typeVersion": 1,
-      "position": [
-        2304,
-        1232
-      ],
-      "id": "796c0ba3-5d3a-40fd-91e8-22b43c6dc81a",
-      "name": "Token Splitter"
-    },
-    {
-      "parameters": {
         "modelName": "embed-english-v3.0"
       },
       "type": "@n8n/n8n-nodes-langchain.embeddingsCohere",
@@ -415,25 +249,6 @@
       ],
       "id": "d8abe3f2-10ea-4b39-a3ae-2a4060d37b53",
       "name": "Reranker Cohere",
-      "credentials": {
-        "cohereApi": {
-          "id": "lGlTjBD139A2c2yP",
-          "name": "CohereApi account"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "modelName": "embed-english-v3.0"
-      },
-      "type": "@n8n/n8n-nodes-langchain.embeddingsCohere",
-      "typeVersion": 1,
-      "position": [
-        2096,
-        1152
-      ],
-      "id": "b97df8ed-8906-44d3-b58f-7a780ede4a01",
-      "name": "Embeddings Cohere1",
       "credentials": {
         "cohereApi": {
           "id": "lGlTjBD139A2c2yP",
@@ -473,12 +288,12 @@
       "type": "@n8n/n8n-nodes-langchain.agent",
       "typeVersion": 3,
       "position": [
-        2048,
-        -1104
+        2064,
+        -1088
       ],
       "id": "aa5e0f64-4b38-42bc-b535-89b2a77c381f",
       "name": "Strategy Agent1",
-      "onError": "continueRegularOutput"
+      "onError": "continueErrorOutput"
     },
     {
       "parameters": {
@@ -488,8 +303,8 @@
       "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
       "typeVersion": 1,
       "position": [
-        1856,
-        -880
+        1872,
+        -864
       ],
       "id": "37676b7c-10cb-4614-9970-a3ecbe038f6e",
       "name": "Groq Chat Model3",
@@ -503,13 +318,13 @@
     {
       "parameters": {
         "sessionIdType": "customKey",
-        "sessionKey": "={{ $('Webhook').item.json.body.sessionId }}"
+        "sessionKey": "={{ $('Webhook').item.json.body.chatId }}"
       },
       "type": "@n8n/n8n-nodes-langchain.memoryPostgresChat",
       "typeVersion": 1.3,
       "position": [
-        2128,
-        -880
+        2144,
+        -864
       ],
       "id": "3d6bf769-2a25-4ced-836a-91404ddf5065",
       "name": "Postgres Chat Memory1",
@@ -532,8 +347,8 @@
       "type": "@n8n/n8n-nodes-langchain.vectorStorePGVector",
       "typeVersion": 1.3,
       "position": [
-        2272,
-        -880
+        2288,
+        -864
       ],
       "id": "6c7b537b-fc2e-4308-b7a2-ea6b1e0295b8",
       "name": "Postgres PGVector Store2",
@@ -551,8 +366,8 @@
       "type": "@n8n/n8n-nodes-langchain.embeddingsCohere",
       "typeVersion": 1,
       "position": [
-        2304,
-        -608
+        2320,
+        -592
       ],
       "id": "79b1f4e2-2468-47f8-9e8e-94ebfd02de40",
       "name": "Embeddings Cohere2",
@@ -570,8 +385,8 @@
       "type": "@n8n/n8n-nodes-langchain.rerankerCohere",
       "typeVersion": 1,
       "position": [
-        2576,
-        -592
+        2592,
+        -576
       ],
       "id": "0e92f113-5434-48bf-9539-7ca8b04385b3",
       "name": "Reranker Cohere1",
@@ -590,8 +405,8 @@
       "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
       "typeVersion": 1,
       "position": [
-        2000,
-        -880
+        2016,
+        -864
       ],
       "id": "49ac3ec6-6126-4646-b6af-1f712f28f7fb",
       "name": "Groq Chat Model4",
@@ -661,117 +476,10 @@
       "typeVersion": 1,
       "position": [
         1744,
-        -1184
+        -1168
       ],
       "id": "18a2e6a7-6f16-4aa1-a3d7-7640368ae49e",
       "name": "Sticky Note3"
-    },
-    {
-      "parameters": {
-        "content": "## File processing",
-        "height": 304,
-        "width": 2368,
-        "color": 4
-      },
-      "type": "n8n-nodes-base.stickyNote",
-      "typeVersion": 1,
-      "position": [
-        -384,
-        688
-      ],
-      "id": "8d34effa-7a95-4dd0-ac50-8edf9466e8fc",
-      "name": "Sticky Note4"
-    },
-    {
-      "parameters": {
-        "content": "this workflow checks for \"C:/n8n_temp/Input_Books\" if a file have been added it will run a python code to split pages into sperate documents.\n\nThe command expects:\n\n- the code directory, in this case (C:/Users/Hashi/OneDrive/Desktop/split_pdf.py)\n- the local file trigger, in this case (C:/n8n_temp/Input_Books)\n- the output folder directory, in this case (C:/n8n_temp/output_pages)\n\nthis workflow will extract page numbers and document names to be added as metadata to the vector store.\n\nIMPORTANT NOTE:\nthis workflow expects parseable documents",
-        "height": 528,
-        "width": 592
-      },
-      "type": "n8n-nodes-base.stickyNote",
-      "typeVersion": 1,
-      "position": [
-        -976,
-        688
-      ],
-      "id": "cd030e63-60b7-46e4-af42-767a077792f9",
-      "name": "Sticky Note5"
-    },
-    {
-      "parameters": {
-        "content": "## Vector store upload",
-        "height": 304,
-        "width": 608,
-        "color": 5
-      },
-      "type": "n8n-nodes-base.stickyNote",
-      "typeVersion": 1,
-      "position": [
-        1984,
-        688
-      ],
-      "id": "a6654995-a052-46d3-8624-cebeb41fa471",
-      "name": "Sticky Note6"
-    },
-    {
-      "parameters": {
-        "content": "## Cohere embed english v3 (Dim 1024)",
-        "height": 352,
-        "width": 288,
-        "color": 6
-      },
-      "type": "n8n-nodes-base.stickyNote",
-      "typeVersion": 1,
-      "position": [
-        1984,
-        992
-      ],
-      "id": "8a8cac48-d41c-493e-babf-565c3779fcba",
-      "name": "Sticky Note7"
-    },
-    {
-      "parameters": {
-        "content": "## token splitter (chunk 450, overlap 75)",
-        "height": 352,
-        "width": 352,
-        "color": 4
-      },
-      "type": "n8n-nodes-base.stickyNote",
-      "typeVersion": 1,
-      "position": [
-        2272,
-        992
-      ],
-      "id": "d4f7c29f-d0ae-46d8-b433-cece92e44d38",
-      "name": "Sticky Note8"
-    },
-    {
-      "parameters": {
-        "jsCode": "const sorted = $input.all().sort((a, b) => {\n  const matchA = a.json.fileName.match(/\\d+/);\n  const matchB = b.json.fileName.match(/\\d+/);\n  // Extract numbers or default to 0 if no number found\n  const numA = matchA ? parseInt(matchA[0]) : 0;\n  const numB = matchB ? parseInt(matchB[0]) : 0;\n  return numA - numB;\n});\n\nreturn sorted.map(item => {\n  const fileName = item.json.fileName;\n  const PageNumber = fileName.replace(/\\.pdf$/, '').match(/\\d+$/)?.[0] || 0;\n  \n  return {\n    json: {\n      ...item.json,\n      PageNumber\n    },\n    binary: item.binary\n  };\n});"
-      },
-      "type": "n8n-nodes-base.code",
-      "typeVersion": 2,
-      "position": [
-        1280,
-        784
-      ],
-      "id": "ddce9fa6-412d-48d2-a385-20a4c286f82a",
-      "name": "Page number extractor",
-      "executeOnce": false
-    },
-    {
-      "parameters": {
-        "jsCode": "const pythonOutput = $input.first().json.stdout || \"\";\n\n// Match after \"Saved: \" and capture everything until line break\nconst filePaths = pythonOutput.match(/Saved:\\s*(.+\\.pdf)/g)?.map(line => line.replace(\"Saved: \", \"\")) || [];\n\n// Convert backslashes to forward slashes\nconst forwardPaths = filePaths.map(path => path.replace(/\\\\/g, \"/\"));\n\n// Replace filenames with wildcard *.pdf using first path\nconst wildcardPath = forwardPaths.length > 0\n    ? forwardPaths[0].replace(/[^\\/]+\\.pdf$/, \"**.pdf\")\n    : \"\";\n\n// Return in n8n format\nreturn [\n    {\n        json: {\n            wildcardPath\n        }\n    }\n];\n\n"
-      },
-      "type": "n8n-nodes-base.code",
-      "typeVersion": 2,
-      "position": [
-        800,
-        784
-      ],
-      "id": "cbff2a88-0127-453f-bfb8-0a9e082025ce",
-      "name": "output page path",
-      "executeOnce": false
     },
     {
       "parameters": {
@@ -788,29 +496,6 @@
       ],
       "id": "e52ad3ef-8051-46f1-a2cd-b93967dc4953",
       "name": "Sticky Note9"
-    },
-    {
-      "parameters": {
-        "assignments": {
-          "assignments": [
-            {
-              "id": "dfc8ee4d-84e7-4706-ac9c-feb68a4b9a1c",
-              "name": "text",
-              "value": "={{ $json.text }}",
-              "type": "string"
-            }
-          ]
-        },
-        "options": {}
-      },
-      "type": "n8n-nodes-base.set",
-      "typeVersion": 3.4,
-      "position": [
-        1840,
-        784
-      ],
-      "id": "b7c2d10f-89e1-4cc9-90b2-db6d20511a79",
-      "name": "Isolate extracted text"
     },
     {
       "parameters": {
@@ -862,7 +547,7 @@
       "typeVersion": 1,
       "position": [
         2192,
-        -736
+        -720
       ],
       "id": "eb4d9cd6-a21c-4541-9252-8491858613f3",
       "name": "Sticky Note11"
@@ -878,7 +563,7 @@
       "typeVersion": 1,
       "position": [
         2480,
-        -736
+        -720
       ],
       "id": "dacafa75-f9e2-425a-91cc-2716c4f14fbf",
       "name": "Sticky Note12"
@@ -914,6 +599,962 @@
       ],
       "id": "832d01bd-f1a5-4516-9f19-01563427e856",
       "name": "Sticky Note14"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "50422f4d-962c-43b8-8604-ed134fe1de8a",
+              "leftValue": "={{ $json.u_id }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notExists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -1296,
+        -1056
+      ],
+      "id": "75c780e9-aac6-4d6f-8609-495f5c479756",
+      "name": "If1",
+      "alwaysOutputData": false
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "login",
+        "responseMode": "lastNode",
+        "responseData": "allEntries",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -1760,
+        -1056
+      ],
+      "id": "3b5d0670-a5e0-437b-b91b-9a09ade1fd6b",
+      "name": "Webhook1",
+      "webhookId": "c966e2df-1926-49a5-890b-55a7007ce71d"
+    },
+    {
+      "parameters": {
+        "errorMessage": "wrong email or password"
+      },
+      "type": "n8n-nodes-base.stopAndError",
+      "typeVersion": 1,
+      "position": [
+        -960,
+        -1360
+      ],
+      "id": "1557c52e-f10a-4205-b853-4daa1f188bd5",
+      "name": "Stop and Error"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "load_history",
+        "responseMode": "lastNode",
+        "responseData": "allEntries",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -1760,
+        -256
+      ],
+      "id": "1972f16d-a418-40ee-b427-e1e961165f5f",
+      "name": "Webhook3",
+      "webhookId": "c966e2df-1926-49a5-890b-55a7007ce71d"
+    },
+    {
+      "parameters": {
+        "operation": "select",
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "user_chat_history",
+          "mode": "list",
+          "cachedResultName": "user_chat_history"
+        },
+        "where": {
+          "values": [
+            {
+              "column": "session_id",
+              "value": "={{ $json.body.session_id }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        -1520,
+        -256
+      ],
+      "id": "1b375707-3eaf-451f-889c-2f7aff2ba578",
+      "name": "Select rows from a table",
+      "credentials": {
+        "postgres": {
+          "id": "g715j0DBduIFVWWL",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $('Webhook4').item.json.body.message }}",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "You are a conversation header generator,\nmake summary of the user's input to be added is a header.\n\nmake it as simple as possible a word or two will be enough."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3,
+      "position": [
+        -1568,
+        -752
+      ],
+      "id": "ec16f3e5-a15c-44ce-a78e-cd488fbe7f8c",
+      "name": "chat_title_generator"
+    },
+    {
+      "parameters": {
+        "operation": "select",
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "users",
+          "mode": "list",
+          "cachedResultName": "users"
+        },
+        "where": {
+          "values": [
+            {
+              "column": "email",
+              "value": "={{ $json.body.email }}"
+            },
+            {
+              "column": "password",
+              "value": "={{ $json.body.password }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        -1504,
+        -1056
+      ],
+      "id": "4e98e1c7-1631-436d-badb-b30ebf7f7713",
+      "name": "check user",
+      "alwaysOutputData": true,
+      "credentials": {
+        "postgres": {
+          "id": "g715j0DBduIFVWWL",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "users",
+          "mode": "list",
+          "cachedResultName": "users"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "email": "={{ $json.body.email }}",
+            "full_name": "={{ $json.body.name }}",
+            "password": "={{ $json.body.password }}",
+            "u_id": "={{ $json.body.userId }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "email",
+              "displayName": "email",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "full_name",
+              "displayName": "full_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "password",
+              "displayName": "password",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "u_id",
+              "displayName": "u_id",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        -1504,
+        -1616
+      ],
+      "id": "25eb1798-819a-4e31-a1d1-52e4653ae5ef",
+      "name": "add new user",
+      "credentials": {
+        "postgres": {
+          "id": "g715j0DBduIFVWWL",
+          "name": "Postgres account"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "errorMessage": "User has an account"
+      },
+      "type": "n8n-nodes-base.stopAndError",
+      "typeVersion": 1,
+      "position": [
+        -1168,
+        -1600
+      ],
+      "id": "d6b0cb3d-915e-4ae4-b08e-c329ecaf0c55",
+      "name": "Stop and Error1"
+    },
+    {
+      "parameters": {
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "chat_header",
+          "mode": "list",
+          "cachedResultName": "chat_header"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "chat_header": "={{ $json.output.header }}",
+            "session_id": "={{ $('Webhook4').item.json.body.chatId }}",
+            "user_id": "={{ $('Webhook4').item.json.body.userId }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "session_id",
+              "displayName": "session_id",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "chat_header",
+              "displayName": "chat_header",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "user_id",
+              "displayName": "user_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        -1216,
+        -752
+      ],
+      "id": "3d484496-b1f6-47b7-aec1-6cca046c188b",
+      "name": "Insert rows in a table",
+      "credentials": {
+        "postgres": {
+          "id": "g715j0DBduIFVWWL",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "select",
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "chat_header",
+          "mode": "list",
+          "cachedResultName": "chat_header"
+        },
+        "where": {
+          "values": [
+            {
+              "column": "user_id",
+              "value": "={{ $json.u_id }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        -960,
+        -1040
+      ],
+      "id": "a55995b0-fb2c-4622-a288-1e045928ef7d",
+      "name": "Select rows from a table2",
+      "credentials": {
+        "postgres": {
+          "id": "g715j0DBduIFVWWL",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Chat history retriver",
+        "height": 384,
+        "width": 720,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -1856,
+        -400
+      ],
+      "id": "4ab02008-a6a2-4358-b94d-947be7369e51",
+      "name": "Sticky Note4"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "header",
+        "responseMode": "lastNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -1792,
+        -752
+      ],
+      "id": "f68f8c95-cf72-4763-8fb0-7aae063cb5f5",
+      "name": "Webhook4",
+      "webhookId": "c966e2df-1926-49a5-890b-55a7007ce71d"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "1429360a-db57-4e78-bd7f-8c88474c3f74",
+              "name": "header",
+              "value": "={{ $json.chat_header }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -960,
+        -752
+      ],
+      "id": "c7610d42-c213-49c2-8a9a-93600193b405",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "signup",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -1744,
+        -1616
+      ],
+      "id": "6b63b332-57f5-41a3-a973-fdcc1f84440b",
+      "name": "Webhook2",
+      "webhookId": "c966e2df-1926-49a5-890b-55a7007ce71d"
+    },
+    {
+      "parameters": {
+        "model": "qwen/qwen3-32b",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        -1568,
+        -576
+      ],
+      "id": "f2265cd9-244f-4537-8cf9-9533cb263677",
+      "name": "Groq Chat Model5",
+      "credentials": {
+        "groqApi": {
+          "id": "b1znR7cwm2555jWA",
+          "name": "Groq account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n\t\"header\": \"the generated header\"\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        -1424,
+        -576
+      ],
+      "id": "a6a73965-f4ab-4412-9db9-8842cee1f480",
+      "name": "Structured Output Parser1"
+    },
+    {
+      "parameters": {
+        "content": "## Sign-up",
+        "height": 304,
+        "width": 880,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -1856,
+        -1712
+      ],
+      "id": "3ef4167c-de91-4ac8-bc6c-ab74206467cb",
+      "name": "Sticky Note5"
+    },
+    {
+      "parameters": {
+        "content": "## Log-in\n\nincase password or email was invalid throw an error",
+        "height": 560,
+        "width": 1136,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -1856,
+        -1408
+      ],
+      "id": "dfbc3b43-e0bf-4b24-9269-909402fd4f32",
+      "name": "Sticky Note6"
+    },
+    {
+      "parameters": {
+        "content": "## Chat header generator\n- Incase of fresh chat, this agent summrize the user's message as a chatheader",
+        "height": 448,
+        "width": 1136,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -1856,
+        -848
+      ],
+      "id": "ff662857-683f-411f-bc0a-70e03a0133b4",
+      "name": "Sticky Note7"
+    },
+    {
+      "parameters": {
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "user_chat_history",
+          "mode": "list",
+          "cachedResultName": "user_chat_history"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "session_id": "={{ $('Webhook').item.json.body.chatId }}",
+            "u_id": "={{ $('Webhook').item.json.body.userId }}",
+            "message": "={{ $json }}",
+            "time": "={{ $now }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "session_id",
+              "displayName": "session_id",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "u_id",
+              "displayName": "u_id",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "message",
+              "displayName": "message",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "object",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "time",
+              "displayName": "time",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        2064,
+        -1408
+      ],
+      "id": "29586876-4389-41be-a9eb-dd04929bb95e",
+      "name": "Insert rows in a table1",
+      "credentials": {
+        "postgres": {
+          "id": "g715j0DBduIFVWWL",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "7269c2af-2038-4e5c-9098-897202d52abb",
+              "name": "output",
+              "value": "={{ $json.output }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1504,
+        -1408
+      ],
+      "id": "39b2ebaa-8025-4bc5-b31f-c779b71b505d",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "jsCode": "return items.map(item => {\n  const agentContent =\n    item.json.output ||\n    item.json.text ||\n    item.json.response ||\n    '';\n\n  return {\n    json: {\n      type: \"ai\",\n      content: agentContent\n    }\n  };\n});\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1792,
+        -1408
+      ],
+      "id": "c0722d2f-4185-4b02-ad55-b58754e7925c",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "jsCode": "return items.map(item => {\n  const humanContent =\n    item.json.output ||\n    item.json.text ||\n    item.json.response ||\n    '';\n\n  return {\n    json: {\n      type: \"human\",\n      content: humanContent\n    }\n  };\n});\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        192,
+        -896
+      ],
+      "id": "ce9b0624-4af7-44b7-a454-237b372bffb8",
+      "name": "Code in JavaScript1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "7269c2af-2038-4e5c-9098-897202d52abb",
+              "name": "output",
+              "value": "={{ $json.body.message }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -96,
+        -896
+      ],
+      "id": "40ee6c3d-0df5-44e2-892d-a3bfc27f4ee5",
+      "name": "Edit Fields2"
+    },
+    {
+      "parameters": {
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "user_chat_history",
+          "mode": "list",
+          "cachedResultName": "user_chat_history"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "session_id": "={{ $('Webhook').item.json.body.chatId }}",
+            "u_id": "={{ $('Webhook').item.json.body.userId }}",
+            "message": "={{ $json }}",
+            "time": "={{ $now }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "session_id",
+              "displayName": "session_id",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "u_id",
+              "displayName": "u_id",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "message",
+              "displayName": "message",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "object",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "time",
+              "displayName": "time",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        464,
+        -896
+      ],
+      "id": "c1e40441-bca9-48ea-aa18-fae443f128cc",
+      "name": "Insert rows in a table2",
+      "credentials": {
+        "postgres": {
+          "id": "g715j0DBduIFVWWL",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "7269c2af-2038-4e5c-9098-897202d52abb",
+              "name": "output",
+              "value": "={{ $('Strategy Agent').item.json.output }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2384,
+        -1408
+      ],
+      "id": "cff531f7-2744-40f6-bad4-9e582b9a5eee",
+      "name": "Edit Fields3"
+    },
+    {
+      "parameters": {
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "user_chat_history",
+          "mode": "list",
+          "cachedResultName": "user_chat_history"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "session_id": "={{ $('Webhook').item.json.body.chatId }}",
+            "u_id": "={{ $('Webhook').item.json.body.userId }}",
+            "message": "={{ $json }}",
+            "time": "={{ $now }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "session_id",
+              "displayName": "session_id",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "u_id",
+              "displayName": "u_id",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "message",
+              "displayName": "message",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "object",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "time",
+              "displayName": "time",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        3184,
+        -1104
+      ],
+      "id": "54f6c9ce-692b-43b2-9491-3a3f79b99c72",
+      "name": "Insert rows in a table3",
+      "credentials": {
+        "postgres": {
+          "id": "g715j0DBduIFVWWL",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "7269c2af-2038-4e5c-9098-897202d52abb",
+              "name": "output",
+              "value": "={{ $json.output }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2624,
+        -1104
+      ],
+      "id": "8b11b366-bf20-44cd-a7fc-40a54f70ecd8",
+      "name": "Edit Fields4"
+    },
+    {
+      "parameters": {
+        "jsCode": "return items.map(item => {\n  const agentContent =\n    item.json.output ||\n    item.json.text ||\n    item.json.response ||\n    '';\n\n  return {\n    json: {\n      type: \"ai\",\n      content: agentContent\n    }\n  };\n});\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2912,
+        -1104
+      ],
+      "id": "16f3f527-cc99-4a86-bab7-20c4da6096d0",
+      "name": "Code in JavaScript2"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "7269c2af-2038-4e5c-9098-897202d52abb",
+              "name": "output",
+              "value": "={{ $('Strategy Agent1').item.json.output }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        3504,
+        -1104
+      ],
+      "id": "42c22b6f-8fb4-4401-8acd-c0638c016e19",
+      "name": "Edit Fields5"
+    },
+    {
+      "parameters": {
+        "errorMessage": "Free tokens limit has been reached"
+      },
+      "type": "n8n-nodes-base.stopAndError",
+      "typeVersion": 1,
+      "position": [
+        2768,
+        -944
+      ],
+      "id": "a03e79a3-4ec0-430b-bb44-20ac8ad76572",
+      "name": "Stop and Error2"
     }
   ],
   "pinData": {},
@@ -923,6 +1564,11 @@
         [
           {
             "node": "Compliance Check Agent",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Edit Fields2",
             "type": "main",
             "index": 0
           }
@@ -1013,105 +1659,6 @@
         ]
       ]
     },
-    "Local File Trigger": {
-      "main": [
-        [
-          {
-            "node": "Replace \\ with /",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Extract from File": {
-      "main": [
-        [
-          {
-            "node": "Isolate extracted text",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Default Data Loader": {
-      "ai_document": [
-        [
-          {
-            "node": "Postgres PGVector Store1",
-            "type": "ai_document",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "book name extractor": {
-      "main": [
-        [
-          {
-            "node": "Execute Command",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Read/Write Files from Disk": {
-      "main": [
-        [
-          {
-            "node": "Page number extractor",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Read from Disk 2": {
-      "main": [
-        [
-          {
-            "node": "book name extractor",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Replace \\ with /": {
-      "main": [
-        [
-          {
-            "node": "Read from Disk 2",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Execute Command": {
-      "main": [
-        [
-          {
-            "node": "output page path",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Token Splitter": {
-      "ai_textSplitter": [
-        [
-          {
-            "node": "Default Data Loader",
-            "type": "ai_textSplitter",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "Embeddings Cohere": {
       "ai_embedding": [
         [
@@ -1129,17 +1676,6 @@
           {
             "node": "Postgres PGVector Store",
             "type": "ai_reranker",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Embeddings Cohere1": {
-      "ai_embedding": [
-        [
-          {
-            "node": "Postgres PGVector Store1",
-            "type": "ai_embedding",
             "index": 0
           }
         ]
@@ -1226,40 +1762,14 @@
       "main": [
         [
           {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
             "node": "Strategy Agent1",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Page number extractor": {
-      "main": [
-        [
-          {
-            "node": "Extract from File",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "output page path": {
-      "main": [
-        [
-          {
-            "node": "Read/Write Files from Disk",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Isolate extracted text": {
-      "main": [
-        [
-          {
-            "node": "Postgres PGVector Store1",
             "type": "main",
             "index": 0
           }
@@ -1268,15 +1778,249 @@
     },
     "Strategy Agent1": {
       "main": [
-        []
+        [
+          {
+            "node": "Edit Fields4",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Stop and Error2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "Stop and Error",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Select rows from a table2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook1": {
+      "main": [
+        [
+          {
+            "node": "check user",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook3": {
+      "main": [
+        [
+          {
+            "node": "Select rows from a table",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "chat_title_generator": {
+      "main": [
+        [
+          {
+            "node": "Insert rows in a table",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "check user": {
+      "main": [
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "add new user": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Stop and Error1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Insert rows in a table": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook4": {
+      "main": [
+        [
+          {
+            "node": "chat_title_generator",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook2": {
+      "main": [
+        [
+          {
+            "node": "add new user",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model5": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "chat_title_generator",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser1": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "chat_title_generator",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Insert rows in a table1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields2": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript1": {
+      "main": [
+        [
+          {
+            "node": "Insert rows in a table2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Insert rows in a table1": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Insert rows in a table3": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields4": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript2": {
+      "main": [
+        [
+          {
+            "node": "Insert rows in a table3",
+            "type": "main",
+            "index": 0
+          }
+        ]
       ]
     }
   },
   "active": true,
   "settings": {
-    "executionOrder": "v1"
+    "executionOrder": "v1",
+    "timezone": "Asia/Riyadh",
+    "callerPolicy": "workflowsFromSameOwner",
+    "executionTimeout": -1,
+    "availableInMCP": false
   },
-  "versionId": "6d658de0-a5a8-4fca-b182-a8877424414c",
+  "versionId": "9063a971-ec06-4afb-baa2-e86ba1c6abbc",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "1cf2b5bf4318a23a63d29974a6dba88a1ee4ca1760f440473397926025aaad84"
