@@ -9,29 +9,37 @@
 3. update the front-end to display the correct time stamp
 
 Database Structure:
-------------------------------------------------------------------------
-- chat_header |
-  - session_id |       Type: varchar (Primary key)
-  - chat_header |      Type: varchar
-  - user_id |          Type: varchar
-------------------------------------------------------------------------
-- n8n_chat_histories |
-  - id |               Type: int4 (Primary key)
-  - session_id |       Type: varchar
-  - message |           Type: jsonb
-------------------------------------------------------------------------
-- user_chat_history
-  - session_id |       Type: varchar
-  - u_id |             Type: varchar (foreign key -> users)
-  - message |          Type: jsonb
-  - time |             Type: timestampz
-------------------------------------------------------------------------
-- users
-  - u_id |             Type: varchar (Primary key)
-  - email |            Type: varchar
-  - full_name |        Type: varchar
-  - password |         Type: varchar
-------------------------------------------------------------------------
+
+chat_header
+| Column Name | Type    | Key         |
+| ----------- | ------- | ----------- |
+| session_id  | varchar | Primary Key |
+| chat_header | varchar | —           |
+| user_id     | varchar | —           |
+
+n8n_chat_histories
+| Column Name | Type    | Key         |
+| ----------- | ------- | ----------- |
+| id          | int4    | Primary Key |
+| session_id  | varchar | —           |
+| message     | jsonb   | —           |
+
+user_chat_history
+| Column Name | Type        | Key                       |
+| ----------- | ----------- | ------------------------- |
+| session_id  | varchar     | —                         |
+| u_id        | varchar     | Foreign Key → users(u_id) |
+| message     | jsonb       | —                         |
+| time        | timestamptz | —                         |
+
+users
+| Column Name | Type    | Key         |
+| ----------- | ------- | ----------- |
+| u_id        | varchar | Primary Key |
+| email       | varchar | —           |
+| full_name   | varchar | —           |
+| password    | varchar | —           |
+
 
 Note:
 - please update the webpage design just make it look better
