@@ -6,7 +6,7 @@
 
 2. after receiving the data, apply preprocessing
 
-3. update the front-end to display the correct time stamp
+3. local rag and sql retrival.
 
 Database Structure:
 
@@ -28,7 +28,7 @@ user_chat_history
 | Column Name | Type        | Key                       |
 | ----------- | ----------- | ------------------------- |
 | session_id  | varchar     | —                         |
-| u_id        | varchar     | Foreign Key → users(u_id) |
+| u_id        | varchar     | —                         |
 | message     | jsonb       | —                         |
 | time        | timestamptz | —                         |
 
@@ -39,7 +39,3 @@ users
 | email       | varchar | —           |
 | full_name   | varchar | —           |
 | password    | varchar | —           |
-
-
-Note:
-- please update the webpage design just make it look better
