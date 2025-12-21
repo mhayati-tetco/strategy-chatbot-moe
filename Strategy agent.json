@@ -628,7 +628,7 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
       "position": [
-        -1296,
+        -1104,
         -1056
       ],
       "id": "75c780e9-aac6-4d6f-8609-495f5c479756",
@@ -660,7 +660,7 @@
       "type": "n8n-nodes-base.stopAndError",
       "typeVersion": 1,
       "position": [
-        -960,
+        -768,
         -1360
       ],
       "id": "1557c52e-f10a-4205-b853-4daa1f188bd5",
@@ -772,7 +772,7 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.6,
       "position": [
-        -1504,
+        -1312,
         -1056
       ],
       "id": "4e98e1c7-1631-436d-badb-b30ebf7f7713",
@@ -857,7 +857,7 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.6,
       "position": [
-        -1504,
+        -1280,
         -1616
       ],
       "id": "25eb1798-819a-4e31-a1d1-52e4653ae5ef",
@@ -877,7 +877,7 @@
       "type": "n8n-nodes-base.stopAndError",
       "typeVersion": 1,
       "position": [
-        -1168,
+        -944,
         -1600
       ],
       "id": "d6b0cb3d-915e-4ae4-b08e-c329ecaf0c55",
@@ -981,7 +981,7 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.6,
       "position": [
-        -960,
+        -768,
         -1040
       ],
       "id": "a55995b0-fb2c-4622-a288-1e045928ef7d",
@@ -1102,7 +1102,7 @@
       "parameters": {
         "content": "## Sign-up",
         "height": 304,
-        "width": 880,
+        "width": 1136,
         "color": 5
       },
       "type": "n8n-nodes-base.stickyNote",
@@ -1118,7 +1118,7 @@
       "parameters": {
         "content": "## Log-in\n\nincase password or email was invalid throw an error",
         "height": 560,
-        "width": 1136,
+        "width": 1296,
         "color": 4
       },
       "type": "n8n-nodes-base.stickyNote",
@@ -1555,6 +1555,32 @@
       ],
       "id": "a03e79a3-4ec0-430b-bb44-20ac8ad76572",
       "name": "Stop and Error2"
+    },
+    {
+      "parameters": {
+        "jsCode": "return items.map(item => {\n  $input.first().json.body.email = item.json.body.email.toLowerCase();\n  return item;\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1520,
+        -1616
+      ],
+      "id": "c178b51d-5140-4f83-91e1-6b6d66e487b1",
+      "name": "Code in JavaScript3"
+    },
+    {
+      "parameters": {
+        "jsCode": "return items.map(item => {\n  $input.first().json.body.email = item.json.body.email.toLowerCase();\n  return item;\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1536,
+        -1056
+      ],
+      "id": "1e3300e6-eaed-4d64-8c8e-f91e49a9e1bb",
+      "name": "Code in JavaScript4"
     }
   ],
   "pinData": {},
@@ -1816,7 +1842,7 @@
       "main": [
         [
           {
-            "node": "check user",
+            "node": "Code in JavaScript4",
             "type": "main",
             "index": 0
           }
@@ -1894,7 +1920,7 @@
       "main": [
         [
           {
-            "node": "add new user",
+            "node": "Code in JavaScript3",
             "type": "main",
             "index": 0
           }
@@ -2010,6 +2036,28 @@
           }
         ]
       ]
+    },
+    "Code in JavaScript3": {
+      "main": [
+        [
+          {
+            "node": "add new user",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript4": {
+      "main": [
+        [
+          {
+            "node": "check user",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "active": true,
@@ -2017,10 +2065,9 @@
     "executionOrder": "v1",
     "timezone": "Asia/Riyadh",
     "callerPolicy": "workflowsFromSameOwner",
-    "executionTimeout": -1,
     "availableInMCP": false
   },
-  "versionId": "9063a971-ec06-4afb-baa2-e86ba1c6abbc",
+  "versionId": "b9576b24-2ce4-4dfd-b993-48326a66fdf2",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "1cf2b5bf4318a23a63d29974a6dba88a1ee4ca1760f440473397926025aaad84"
