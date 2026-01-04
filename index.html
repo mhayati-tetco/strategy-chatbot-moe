@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TETCO Chat - AI Assistant</title>
+    <title>TETCO Strategy Chat - Strategy Information Assistant</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -28,7 +28,7 @@
         }
 
         [data-theme="dark"] {
-            /* Dark mode colors - Gemini inspired */
+            /* Dark mode colors */
             --bg-primary: #131314;
             --bg-secondary: #1e1f20;
             --bg-tertiary: #282a2c;
@@ -120,17 +120,6 @@
             }
         }
 
-        @keyframes sparkle {
-            0%, 100% {
-                opacity: 0;
-                transform: scale(0);
-            }
-            50% {
-                opacity: 1;
-                transform: scale(1);
-            }
-        }
-
         @keyframes gradient-shift {
             0% {
                 background-position: 0% 50%;
@@ -153,9 +142,12 @@
             align-items: center;
             justify-content: center;
             min-height: 100vh;
+            height: 100vh;
             background: var(--bg-primary);
             padding: 20px;
             animation: fadeIn 0.5s ease;
+            overflow-y: auto;
+            overflow-x: hidden;
         }
 
         .auth-box {
@@ -166,7 +158,27 @@
             box-shadow: var(--shadow-lg);
             width: 100%;
             max-width: 440px;
+            max-height: calc(100vh - 40px);
+            overflow-y: auto;
+            margin: auto;
             animation: fadeIn 0.6s ease;
+        }
+
+        .auth-box::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .auth-box::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .auth-box::-webkit-scrollbar-thumb {
+            background: var(--border-color);
+            border-radius: 4px;
+        }
+
+        .auth-box::-webkit-scrollbar-thumb:hover {
+            background: var(--text-muted);
         }
 
         .auth-logo {
@@ -345,6 +357,170 @@
             font-size: 16px;
         }
 
+        /* Strategy Sections (Styled like Gems) */
+        .sections-section {
+            padding: 8px 16px 16px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .sections-section-title {
+            padding: 8px 12px;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            user-select: none;
+            transition: color 0.2s ease;
+        }
+
+        .sections-section-title:hover {
+            color: var(--text-primary);
+        }
+
+        .sections-section-title i {
+            transition: transform 0.3s ease;
+            font-size: 10px;
+        }
+
+        .sections-section-title.collapsed i {
+            transform: rotate(-90deg);
+        }
+
+        .sections-list {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            max-height: 500px;
+            overflow: hidden;
+            transition: max-height 0.3s ease, opacity 0.3s ease;
+            opacity: 1;
+        }
+
+        .sections-list.collapsed {
+            max-height: 0;
+            opacity: 0;
+        }
+
+        .section-item {
+            padding: 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: var(--text-secondary);
+            animation: slideInLeft 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .section-item:hover {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+
+        .section-item:active {
+            transform: scale(0.98);
+        }
+
+        .section-item.active {
+            background: rgba(54, 186, 145, 0.2) !important;
+            color: #36BA91 !important;
+            border: 2px solid #36BA91 !important;
+            font-weight: 600;
+            position: relative;
+            z-index: 10;
+        }
+
+        .section-item.active::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: #36BA91;
+            border-radius: 8px 0 0 8px;
+            z-index: 11;
+        }
+
+        .section-item.active .section-icon {
+            background: #36BA91 !important;
+            box-shadow: 0 0 16px rgba(54, 186, 145, 0.8) !important;
+            transform: scale(1.1);
+            position: relative;
+            z-index: 12;
+        }
+
+        .section-item.active .section-title {
+            color: #36BA91 !important;
+        }
+
+        .section-item.active .section-description {
+            color: rgba(54, 186, 145, 0.8) !important;
+        }
+
+        .section-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            flex-shrink: 0;
+            color: white;
+        }
+
+        .section-icon.goals_kpis {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .section-icon.timelines {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        .section-icon.responsibility {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+
+        .section-icon.forecasts {
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+        }
+
+        .section-icon.financials {
+            background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+        }
+
+        .section-content {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .section-title {
+            font-weight: 500;
+            font-size: 14px;
+            color: var(--text-primary);
+            margin-bottom: 2px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .section-description {
+            font-size: 12px;
+            color: var(--text-muted);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
         .chat-history {
             flex: 1;
             overflow-y: auto;
@@ -418,20 +594,26 @@
             font-size: 14px;
         }
 
+        /* User Section (File 2's approach) */
         .sidebar-footer {
             padding: 16px;
             border-top: 1px solid var(--border-color);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
         }
 
-        .user-info {
+        .user-section {
             display: flex;
             align-items: center;
             gap: 12px;
-            flex: 1;
-            min-width: 0;
+            padding: 12px;
+            background: var(--bg-tertiary);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+
+        .user-section:hover {
+            background: var(--accent-light);
         }
 
         .user-avatar {
@@ -448,6 +630,11 @@
             flex-shrink: 0;
         }
 
+        .user-info {
+            flex: 1;
+            min-width: 0;
+        }
+
         .user-name {
             font-size: 14px;
             font-weight: 500;
@@ -457,25 +644,59 @@
             white-space: nowrap;
         }
 
-        .theme-toggle {
-            width: 36px;
-            height: 36px;
-            background: var(--bg-tertiary);
-            border: none;
-            border-radius: 50%;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+        .user-email {
+            font-size: 12px;
             color: var(--text-secondary);
-            transition: all 0.2s ease;
-            flex-shrink: 0;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
         }
 
-        .theme-toggle:hover {
-            background: var(--accent-light);
-            color: var(--accent-primary);
-            transform: rotate(180deg);
+        /* User Menu Dropdown */
+        .user-menu {
+            position: absolute;
+            bottom: 70px;
+            left: 16px;
+            right: 16px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            box-shadow: var(--shadow-lg);
+            padding: 8px;
+            display: none;
+            animation: fadeIn 0.2s ease;
+            z-index: 1000;
+        }
+
+        .user-menu.show {
+            display: block;
+        }
+
+        .user-menu-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            color: var(--text-primary);
+            font-size: 14px;
+        }
+
+        .user-menu-item:hover {
+            background: var(--bg-tertiary);
+        }
+
+        .user-menu-item i {
+            width: 20px;
+            color: var(--text-secondary);
+        }
+
+        .user-menu-divider {
+            height: 1px;
+            background: var(--border-color);
+            margin: 8px 0;
         }
 
         /* Main Chat Area */
@@ -485,6 +706,7 @@
             flex-direction: column;
             background: var(--bg-primary);
             min-width: 0;
+            border-left: 1px solid var(--border-color);
         }
 
         .chat-header {
@@ -495,6 +717,7 @@
             align-items: center;
             gap: 16px;
             min-height: 64px;
+            flex-shrink: 0;
         }
 
         .menu-btn {
@@ -526,11 +749,18 @@
             white-space: nowrap;
         }
 
+        .chat-subtitle {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
         .chat-messages {
             flex: 1;
             overflow-y: auto;
             padding: 24px;
             scroll-behavior: smooth;
+            display: flex;
+            flex-direction: column;
         }
 
         .chat-messages::-webkit-scrollbar {
@@ -727,6 +957,73 @@
             gap: 8px;
         }
 
+        /* Table Styles */
+        .message-content table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 16px 0;
+            font-size: 14px;
+            background: var(--bg-secondary);
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .message-content table thead {
+            background: var(--accent-primary);
+            color: white;
+        }
+
+        .message-content table th {
+            padding: 12px 16px;
+            text-align: left;
+            font-weight: 600;
+            border-bottom: 2px solid var(--accent-secondary);
+        }
+
+        .message-content table td {
+            padding: 12px 16px;
+            border: 1px solid var(--border-color);
+        }
+
+        .message-content table tbody tr:nth-child(even) {
+            background: var(--bg-tertiary);
+        }
+
+        .message-content table tbody tr:hover {
+            background: var(--accent-light);
+            transition: background-color 0.2s ease;
+        }
+
+        .message-content table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+            margin: 16px 0;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .table-wrapper::-webkit-scrollbar {
+            height: 8px;
+        }
+
+        .table-wrapper::-webkit-scrollbar-track {
+            background: var(--bg-tertiary);
+            border-radius: 4px;
+        }
+
+        .table-wrapper::-webkit-scrollbar-thumb {
+            background: var(--accent-primary);
+            border-radius: 4px;
+        }
+
+        .table-wrapper::-webkit-scrollbar-thumb:hover {
+            background: var(--accent-secondary);
+        }
+
         /* Typing Indicator */
         .typing-indicator {
             display: flex;
@@ -766,7 +1063,7 @@
             background: var(--bg-tertiary);
             border: 2px solid var(--border-color);
             border-radius: 24px;
-            padding: 4px 4px 4px 20px;
+            padding: 4px 20px;
             transition: all 0.2s ease;
         }
 
@@ -941,6 +1238,7 @@
 
             .auth-box {
                 padding: 32px 24px;
+                max-height: calc(100vh - 20px);
             }
 
             .input-area {
@@ -965,6 +1263,29 @@
             scroll-behavior: smooth;
             display: flex;
             flex-direction: column;
+            }
+
+            .auth-box {
+                padding: 24px 20px;
+                max-height: calc(100vh - 10px);
+            }
+
+            .auth-box h2 {
+                font-size: 28px;
+                margin-bottom: 6px;
+            }
+
+            .auth-subtitle {
+                font-size: 14px;
+                margin-bottom: 24px;
+            }
+
+            .form-group {
+                margin-bottom: 20px;
+            }
+
+            .auth-container {
+                padding: 5px;
             }
         }
 
@@ -993,6 +1314,26 @@
             background-size: 200% 100%;
             animation: shimmer 1.5s ease-in-out infinite;
         }
+
+        /* Guest Mode Button */
+        .guest-mode-btn {
+            width: 100%;
+            padding: 12px;
+            background: transparent;
+            color: var(--accent-primary);
+            border: 1px solid var(--accent-primary);
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-family: inherit;
+            margin-top: 16px;
+        }
+
+        .guest-mode-btn:hover {
+            background: var(--accent-light);
+        }
     </style>
 </head>
 
@@ -1003,10 +1344,10 @@
     <div id="login-section" class="auth-container">
         <div class="auth-box">
             <div class="auth-logo">
-                <img src="data:image/png;base64,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"   alt="TETCO">          
+                <img src="data:image/png;base64,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">
             </div>
             <h2>Welcome back</h2>
-            <p class="auth-subtitle">Sign in to continue to TETCO Chat</p>
+            <p class="auth-subtitle">Sign in to continue to TETCO Strategy Chat</p>
             <form id="login-form">
                 <div class="form-group">
                     <label for="login-email">Email</label>
@@ -1019,8 +1360,13 @@
                 <button type="submit" class="btn-primary">Sign in</button>
             </form>
             <div class="auth-link">
-                Don't have an account? <a href="#" id="show-signup">Create account</a>
+                <a href="#" id="show-signup">Create account</a>
             </div>
+            <!-- Guest Mode Button -->
+            <button class="guest-mode-btn" id="guest-mode-btn">
+                <i class="fas fa-user-shield" style="margin-right: 8px;"></i>
+                Continue as Guest
+            </button>
         </div>
     </div>
 
@@ -1028,10 +1374,10 @@
     <div id="signup-section" class="auth-container hidden">
         <div class="auth-box">
             <div class="auth-logo">
-                <img src="data:image/png;base64,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" alt="TETCO">
+                <img src="data:image/png;base64,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">
             </div>
             <h2>Create account</h2>
-            <p class="auth-subtitle">Join TETCO Chat to get started</p>
+            <p class="auth-subtitle">Join TETCO Strategy Chat to get started</p>
             <form id="signup-form">
                 <div class="form-group">
                     <label for="signup-name">Full Name</label>
@@ -1057,7 +1403,7 @@
         </div>
     </div>
 
-    <!-- Chat Layout -->
+    <!-- Main Chat Layout -->
     <div id="chat-layout" class="chat-layout hidden">
         <div class="sidebar-overlay" id="sidebar-overlay"></div>
         
@@ -1065,27 +1411,95 @@
         <div class="sidebar" id="sidebar">
             <div class="sidebar-header">
                 <div class="logo-container">
-                <img src="data:image/png;base64,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" alt="TETCO">
-                    <span class="logo-text">TETCO</span>
+                <img src="data:image/png;base64,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">
+            </div>           
+            <button class="new-chat-btn" id="new-chat-btn">
+                <i class="fas fa-plus"></i>
+                <span>New Chat</span>
+            </button>
+            </div>
+            
+            <div class="strategy-sections">
+                <!-- Strategy Sections (Styled like Gems) -->
+                <div class="sections-section">
+                    <div class="sections-section-title" id="sections-section-title">
+                        Strategy Sections
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="sections-list" id="sections-list">
+                        <div class="section-item" data-section-type="goals_kpis">
+                            <div class="section-icon goals_kpis">
+                                <i class="fas fa-bullseye"></i>
+                            </div>
+                            <div class="section-content">
+                                <div class="section-title">Goals & KPIs</div>
+                                <div class="section-description">Strategic goals and key performance indicators</div>
+                            </div>
+                        </div>
+                        <div class="section-item" data-section-type="timelines">
+                            <div class="section-icon timelines">
+                                <i class="fas fa-calendar-alt"></i>
+                            </div>
+                            <div class="section-content">
+                                <div class="section-title">Timelines</div>
+                                <div class="section-description">Project timelines and milestones</div>
+                            </div>
+                        </div>
+                        <div class="section-item" data-section-type="responsibility">
+                            <div class="section-icon responsibility">
+                                <i class="fas fa-users-cog"></i>
+                            </div>
+                            <div class="section-content">
+                                <div class="section-title">Responsibility</div>
+                                <div class="section-description">Roles and team responsibilities</div>
+                            </div>
+                        </div>
+                        <div class="section-item" data-section-type="forecasts">
+                            <div class="section-icon forecasts">
+                                <i class="fas fa-chart-line"></i>
+                            </div>
+                            <div class="section-content">
+                                <div class="section-title">Forecasts</div>
+                                <div class="section-description">Strategic forecasts and projections</div>
+                            </div>
+                        </div>
+                        <div class="section-item" data-section-type="financials">
+                            <div class="section-icon financials">
+                                <i class="fas fa-chart-pie"></i>
+                            </div>
+                            <div class="section-content">
+                                <div class="section-title">Financials</div>
+                                <div class="section-description">Financial insights and investments</div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <button class="new-chat-btn" id="new-chat-btn">
-                    <i class="fas fa-plus"></i>
-                    New chat
-                </button>
             </div>
             
             <div class="chat-history" id="chat-history">
                 <div class="chat-history-empty">No chat history yet</div>
             </div>
             
+            <!-- User Section (File 2's approach) -->
             <div class="sidebar-footer">
-                <div class="user-info">
+                <div class="user-section" id="user-section">
                     <div class="user-avatar" id="user-avatar">U</div>
-                    <span class="user-name" id="user-name-display">User</span>
+                    <div class="user-info">
+                        <div class="user-name" id="user-name-display">User</div>
+                        <div class="user-email" id="user-email-display"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="88fdfbedfac8edf0e9e5f8e4eda6ebe7e5">[email&#160;protected]</a></div>
+                    </div>
                 </div>
-                <button class="theme-toggle" id="themeToggle" title="Toggle theme">
-                    <i class="fas fa-moon"></i>
-                </button>
+                <div class="user-menu" id="user-menu">
+                    <div class="user-menu-item" id="theme-menu-item">
+                        <i class="fas fa-moon"></i>
+                        <span>Dark Mode</span>
+                    </div>
+                    <div class="user-menu-divider"></div>
+                    <div class="user-menu-item" id="logout-btn">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span>Sign Out</span>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -1095,7 +1509,10 @@
                 <button class="menu-btn" id="menu-btn">
                     <i class="fas fa-bars"></i>
                 </button>
-                <h1 class="chat-title" id="chat-title">New Chat</h1>
+                <div class="chat-header-content">
+                    <h1 class="chat-title" id="chat-title">Strategy Q&A</h1>
+                    <div class="chat-subtitle" id="chat-subtitle">Ask any questions about TETCO's strategy</div>
+                </div>
             </div>
             
             <div class="chat-messages" id="chat-messages">
@@ -1114,7 +1531,7 @@
                                 <i class="fas fa-lightbulb"></i>
                             </div>
                             <div class="suggestion-card-title">Get Started</div>
-                            <div class="suggestion-card-desc">Learn what TETCO Chat can do for you</div>
+                            <div class="suggestion-card-desc">Learn what TETCO Strategy Chat can do for you</div>
                         </div>
                         <div class="suggestion-card" onclick="sendQuickMessage('Tell me about your features')">
                             <div class="suggestion-card-icon">
@@ -1144,7 +1561,7 @@
             <div class="input-area">
                 <div class="input-container">
                     <div class="input-wrapper">
-                        <textarea class="chat-input" id="chat-input" rows="1" placeholder="Message TETCO Chat..."></textarea>
+                        <textarea class="chat-input" id="chat-input" rows="1" placeholder="Message TETCO Strategy Chat..."></textarea>
                         <button class="send-btn" id="send-btn">
                             <i class="fas fa-arrow-up"></i>
                         </button>
@@ -1155,13 +1572,13 @@
         </div>
     </div>
 
-    <script>
+    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
         // Theme toggle functionality
-        const themeToggle = document.getElementById('themeToggle');
+        const themeToggle = document.getElementById('theme-menu-item');
         const html = document.documentElement;
 
-        // Check for saved theme preference or default to dark mode
-        const currentTheme = localStorage.getItem('theme') || 'dark';
+        // Check for saved theme preference or default to light mode
+        const currentTheme = localStorage.getItem('theme') || 'light';
         html.setAttribute('data-theme', currentTheme);
         updateThemeIcon();
 
@@ -1178,6 +1595,7 @@
             const theme = html.getAttribute('data-theme');
             const icon = themeToggle.querySelector('i');
             icon.className = theme === 'light' ? 'fas fa-moon' : 'fas fa-sun';
+            themeToggle.querySelector('span').textContent = theme === 'light' ? 'Dark Mode' : 'Light Mode';
         }
 
         // Quick message functionality
@@ -1206,19 +1624,28 @@
         const showLoginLink = document.getElementById('show-login');
         const loginForm = document.getElementById('login-form');
         const signupForm = document.getElementById('signup-form');
+        const guestModeBtn = document.getElementById('guest-mode-btn');
         const chatMessages = document.getElementById('chat-messages');
         const chatInput = document.getElementById('chat-input');
         const sendBtn = document.getElementById('send-btn');
         const notificationEl = document.getElementById('notification');
         const userNameDisplay = document.getElementById('user-name-display');
+        const userEmailDisplay = document.getElementById('user-email-display');
         const userAvatar = document.getElementById('user-avatar');
         const newChatBtn = document.getElementById('new-chat-btn');
         const chatHistory = document.getElementById('chat-history');
         const emptyState = document.getElementById('empty-state');
         const chatTitle = document.getElementById('chat-title');
+        const chatSubtitle = document.getElementById('chat-subtitle');
         const menuBtn = document.getElementById('menu-btn');
         const sidebar = document.getElementById('sidebar');
         const sidebarOverlay = document.getElementById('sidebar-overlay');
+        const sectionItems = document.querySelectorAll('.section-item');
+        const sectionsSectionTitle = document.getElementById('sections-section-title');
+        const sectionsList = document.getElementById('sections-list');
+        const userSection = document.getElementById('user-section');
+        const userMenu = document.getElementById('user-menu');
+        const logoutBtn = document.getElementById('logout-btn');
 
         // Utility Functions
         function showNotification(message, type) {
@@ -1248,6 +1675,10 @@
                 hash |= 0;
             }
             return Math.abs(hash).toString(16).padStart(8, '0');
+        }
+
+        function generateGuestId() {
+            return 'guest_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
         }
 
         function generateChatId() {
@@ -1335,7 +1766,8 @@
                         name: email.split('@')[0],
                         email,
                         password,
-                        userId: userId
+                        userId: userId,
+                        isGuest: false
                     };
                     
                     showNotification('Welcome back!', 'success');
@@ -1379,7 +1811,8 @@
                         name: name,
                         email: email,
                         password: password,
-                        userId: userId
+                        userId: userId,
+                        isGuest: false
                     };
                     chatHistoryList = [];
                     showNotification('Account created successfully!', 'success');
@@ -1393,12 +1826,26 @@
             }
         });
 
+        // Guest Mode
+        guestModeBtn.addEventListener('click', () => {
+            currentUser = {
+                name: 'Guest',
+                email: 'guest@tetco.com',
+                userId: generateGuestId(),
+                isGuest: true
+            };
+            chatHistoryList = [];
+            showNotification('Signed in as guest', 'info');
+            showChatInterface();
+        });
+
         function showChatInterface() {
             loginSection.classList.add('hidden');
             signupSection.classList.add('hidden');
             chatLayout.classList.remove('hidden');
             
             userNameDisplay.textContent = currentUser.name;
+            userEmailDisplay.textContent = currentUser.isGuest ? 'Guest Mode' : currentUser.email;
             userAvatar.textContent = currentUser.name.charAt(0).toUpperCase();
             
             // Update greeting with user's name
@@ -1471,7 +1918,7 @@
                 item.className = 'chat-history-item';
                 item.innerHTML = `
                     <i class="fas fa-message"></i>
-                    <span>${chat.chat_header || 'Untitled Chat'}</span>
+                    <span>${chat.chat_header || 'Strategy Q&A'}</span>
                 `;
                 item.dataset.sessionId = chat.session_id;
                 item.dataset.userId = chat.user_id;
@@ -1509,12 +1956,27 @@
                         userId: chatData.user_id,
                         title: chatData.chat_header,
                         messages: [],
+                        sectionValue: chatData.section_value || null, // Restore section if available
                         createdAt: new Date().toISOString(),
                         updatedAt: new Date().toISOString()
                     };
                     
+                    // Restore section name if chat has a section
+                    if (chatData.section_value) {
+                        const sectionConfig = {
+                            'goals_kpis': 'Goals & KPIs',
+                            'timelines': 'Timelines',
+                            'responsibility': 'Responsibility',
+                            'forecasts': 'Forecasts',
+                            'financials': 'Financials'
+                        };
+                        currentChat.sectionName = sectionConfig[chatData.section_value];
+                    }
+                    
                     clearChatMessages();
                     chatTitle.textContent = chatData.chat_header;
+                    // Show section name as subtitle if available, otherwise show default
+                    chatSubtitle.textContent = currentChat.sectionName || 'Strategy Q&A';
                     
                     // Reset animation delay
                     messageAnimationDelay = 0;
@@ -1559,6 +2021,165 @@
             }
         }
 
+        function parseMarkdown(text) {
+            // Escape HTML first to prevent XSS
+            let html = text
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;');
+            
+            // Parse tables FIRST (before other formatting)
+            // Handle two formats:
+            // 1. Proper newlines between rows
+            // 2. Inline format (all on one line with || as separators)
+            
+            // First, try to match inline format: ||row1||row2||row3||
+            html = html.replace(/\|\s*([^|\n]+?)\s*\|\s*([^|\n]+?)\s*\|\s*([^|\n]+?)\s*\|\s*([^|\n]+?)\s*\|\|[-:\s|]+\|\|((?:\|[^|\n]+?\|[^|\n]+?\|[^|\n]+?\|[^|\n]+?\|\|?)+)/g, function(match) {
+                // This handles inline tables like: | h1 | h2 | h3 ||----|----|----|| r1 | r2 | r3 ||...
+                const parts = match.split('||').filter(p => p.trim());
+                if (parts.length < 3) return match;
+                
+                // Parse header
+                const headerCells = parts[0].split('|').map(c => c.trim()).filter(c => c);
+                if (headerCells.length === 0) return match;
+                
+                // Parse data rows (skip separator at index 1)
+                const rows = [];
+                for (let i = 2; i < parts.length; i++) {
+                    const cells = parts[i].split('|').map(c => c.trim()).filter(c => c);
+                    if (cells.length > 0) {
+                        // Ensure row has same number of cells as header
+                        while (cells.length < headerCells.length) cells.push('');
+                        rows.push(cells.slice(0, headerCells.length));
+                    }
+                }
+                
+                if (rows.length === 0) return match;
+                
+                // Build HTML table
+                let tableHtml = '<div class="table-wrapper"><table><thead><tr>';
+                headerCells.forEach(h => { tableHtml += `<th>${h}</th>`; });
+                tableHtml += '</tr></thead><tbody>';
+                rows.forEach(row => {
+                    tableHtml += '<tr>';
+                    row.forEach(cell => { tableHtml += `<td>${cell}</td>`; });
+                    tableHtml += '</tr>';
+                });
+                tableHtml += '</tbody></table></div>';
+                return tableHtml;
+            });
+            
+            // Then handle standard format with newlines
+            html = html.replace(/^(\|[^\n]+\|+)\r?\n(\|[-:\s|]+\|+)\r?\n((\|[^\n]+\|+\r?\n?)*)/gm, function(match) {
+                const lines = match.trim().split(/\r?\n/).filter(line => line.trim());
+                if (lines.length < 3) return match;
+                
+                // Clean up double pipes and parse header row
+                const headerLine = lines[0].replace(/\|+/g, '|');
+                const headers = headerLine.split('|')
+                    .map(cell => cell.trim())
+                    .filter(cell => cell.length > 0);
+                
+                if (headers.length === 0) return match;
+                
+                // Parse data rows (skip separator line at index 1)
+                const rows = [];
+                for (let i = 2; i < lines.length; i++) {
+                    const cleanLine = lines[i].replace(/\|+/g, '|');
+                    const cells = cleanLine.split('|')
+                        .map(cell => cell.trim())
+                        .filter(cell => cell.length > 0);
+                    
+                    if (cells.length > 0) {
+                        while (cells.length < headers.length) {
+                            cells.push('');
+                        }
+                        rows.push(cells.slice(0, headers.length));
+                    }
+                }
+                
+                if (rows.length === 0) return match;
+                
+                // Build HTML table
+                let tableHtml = '<div class="table-wrapper"><table>';
+                tableHtml += '<thead><tr>';
+                headers.forEach(header => {
+                    tableHtml += `<th>${header}</th>`;
+                });
+                tableHtml += '</tr></thead>';
+                tableHtml += '<tbody>';
+                rows.forEach(row => {
+                    tableHtml += '<tr>';
+                    row.forEach(cell => {
+                        tableHtml += `<td>${cell}</td>`;
+                    });
+                    tableHtml += '</tr>';
+                });
+                tableHtml += '</tbody></table></div>';
+                
+                return tableHtml;
+            });
+            
+            // Parse headers (must be at line start)
+            html = html.replace(/^#### (.+)$/gm, '<h4 style="font-size: 1.05em; font-weight: 600; margin: 10px 0 6px 0; color: var(--text-primary);">$1</h4>');
+            html = html.replace(/^### (.+)$/gm, '<h3 style="font-size: 1.15em; font-weight: 600; margin: 12px 0 8px 0; color: var(--text-primary);">$1</h3>');
+            html = html.replace(/^## (.+)$/gm, '<h2 style="font-size: 1.3em; font-weight: 700; margin: 16px 0 10px 0; color: var(--accent-primary);">$1</h2>');
+            html = html.replace(/^# (.+)$/gm, '<h1 style="font-size: 1.5em; font-weight: 700; margin: 20px 0 12px 0; color: var(--accent-primary);">$1</h1>');
+            
+            // Parse lists (unordered with -, *, or +)
+            html = html.replace(/^\s*[-*+]\s+(.+)$/gm, '<li style="margin-left: 20px; margin-bottom: 4px;">$1</li>');
+            
+            // Parse numbered lists
+            html = html.replace(/^\s*\d+\.\s+(.+)$/gm, '<li style="margin-left: 20px; margin-bottom: 4px; list-style-type: decimal;">$1</li>');
+            
+            // Wrap consecutive <li> tags in <ul> or <ol>
+            html = html.replace(/(<li[^>]*>.*?<\/li>\s*)+/g, function(match) {
+                if (match.includes('list-style-type: decimal')) {
+                    return '<ol style="margin: 8px 0; padding-left: 0;">' + match + '</ol>';
+                }
+                return '<ul style="margin: 8px 0; padding-left: 0; list-style-position: inside;">' + match + '</ul>';
+            });
+            
+            // Parse bold (**text** or __text__)
+            html = html.replace(/\*\*(.+?)\*\*/g, '<strong style="font-weight: 600;">$1</strong>');
+            html = html.replace(/__(.+?)__/g, '<strong style="font-weight: 600;">$1</strong>');
+            
+            // Parse italic (*text* or _text_) - avoid conflicts with bold
+            html = html.replace(/(?<!\*)\*(?!\*)([^\*]+?)(?<!\*)\*(?!\*)/g, '<em>$1</em>');
+            html = html.replace(/(?<!_)_(?!_)([^_]+?)(?<!_)_(?!_)/g, '<em>$1</em>');
+            
+            // Parse inline code (`code`)
+            html = html.replace(/`([^`]+)`/g, '<code style="background: var(--bg-tertiary); padding: 2px 6px; border-radius: 4px; font-family: monospace; font-size: 0.9em;">$1</code>');
+            
+            // Parse code blocks (```code```)
+            html = html.replace(/```([^`]+)```/g, '<pre style="background: var(--bg-tertiary); padding: 12px; border-radius: 8px; overflow-x: auto; margin: 8px 0;"><code style="font-family: monospace; font-size: 0.9em;">$1</code></pre>');
+            
+            // Parse blockquotes (&gt; text)
+            html = html.replace(/^&gt;\s+(.+)$/gm, '<blockquote style="border-left: 3px solid var(--accent-primary); padding-left: 12px; margin: 8px 0; color: var(--text-secondary); font-style: italic;">$1</blockquote>');
+            
+            // Parse horizontal rules (---, ***, ___)
+            html = html.replace(/^(---|\*\*\*|___)$/gm, '<hr style="border: none; border-top: 1px solid var(--border-color); margin: 16px 0;">');
+            
+            // Parse links [text](url)
+            html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" style="color: var(--accent-primary); text-decoration: underline;">$1</a>');
+            
+            // Parse line breaks
+            // Double newline = paragraph break
+            html = html.replace(/\n\n+/g, '</p><p style="margin: 8px 0;">');
+            // Single newline = line break
+            html = html.replace(/\n/g, '<br>');
+            
+            // Wrap in paragraph if not already wrapped
+            if (!html.startsWith('<h') && !html.startsWith('<ul') && !html.startsWith('<ol') && !html.startsWith('<blockquote') && !html.startsWith('<div class="table-wrapper">')) {
+                html = '<p style="margin: 8px 0;">' + html + '</p>';
+            }
+            
+            // Clean up empty paragraphs
+            html = html.replace(/<p[^>]*>\s*<\/p>/g, '');
+            
+            return html;
+        }
+
         function displayMessage(text, sender, timestamp = null) {
             const messageGroup = document.createElement('div');
             messageGroup.className = `message-group ${sender}`;
@@ -1569,14 +2190,14 @@
             avatar.className = `message-avatar ${sender}`;
             avatar.innerHTML = sender === 'user' 
                 ? currentUser.name.charAt(0).toUpperCase() 
-                : '<i class="fas fa-robot"></i>';
+                : '<i class="fas fa-chess-rook"></i>';
             
             const messageContent = document.createElement('div');
             messageContent.className = 'message-content';
             
             const messageText = document.createElement('div');
             messageText.className = 'message-text';
-            messageText.textContent = text;
+            if (sender === "bot") { messageText.innerHTML = parseMarkdown(text); } else { messageText.textContent = text; }
             
             const messageTime = document.createElement('div');
             messageTime.className = 'message-time';
@@ -1611,15 +2232,26 @@
             currentChat = {
                 id: currentChatId,
                 userId: currentUser.userId,
-                title: 'New Chat',
+                title: 'Strategy Q&A',
                 messages: [],
+                sectionValue: null, // NEW: Initialize section value
                 createdAt: new Date().toISOString(),
                 updatedAt: new Date().toISOString()
             };
             
             clearChatMessages();
-            chatTitle.textContent = 'New Chat';
+            chatTitle.textContent = 'Strategy Q&A';
+            chatSubtitle.textContent = 'Ask any questions about TETCO\'s strategy';
             
+            // Remove active class from all sections (general chat mode)
+            document.querySelectorAll('.section-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            
+            // Reset to default generic welcome state
+            updateEmptyState(null);
+            
+            // Clear attached files
             const items = chatHistory.querySelectorAll('.chat-history-item');
             items.forEach(item => item.classList.remove('active'));
             
@@ -1667,12 +2299,14 @@
 
         async function sendChatMessage(message, isFirstMessage) {
             try {
+                // NEW: Include section value in payload
                 const chatData = {
                     userId: currentUser.userId,
                     chatId: currentChatId,
                     message: message,
                     timestamp: new Date().toISOString(),
-                    isFirstMessage: isFirstMessage
+                    isFirstMessage: isFirstMessage,
+                    section: currentChat.sectionValue || 'general' // NEW: Send section value
                 };
                 
                 const response = await fetch('http://localhost:5678/webhook/chat', {
@@ -1714,12 +2348,14 @@
 
         async function generateChatHeader(message) {
             try {
+                // NEW: Include section value in header generation
                 const headerData = {
                     userId: currentUser.userId,
                     chatId: currentChatId,
                     message: message,
                     timestamp: new Date().toISOString(),
-                    isFirstMessage: true
+                    isFirstMessage: true,
+                    section: currentChat.sectionValue || 'general' // NEW: Send section value
                 };
                 
                 const response = await fetch('http://localhost:5678/webhook/header', {
@@ -1766,7 +2402,7 @@
                 typingIndicator.className = 'message-group bot';
                 typingIndicator.innerHTML = `
                     <div class="message-avatar bot">
-                        <i class="fas fa-robot"></i>
+                        <i class="fas fa-chess-rook"></i>
                     </div>
                     <div class="message-content">
                         <div class="typing-indicator">
@@ -1801,10 +2437,16 @@
                             currentChat.title = generatedHeader;
                             chatTitle.textContent = generatedHeader;
                             
+                            // If in a section, show section name as subtitle
+                            if (currentChat.sectionName) {
+                                chatSubtitle.textContent = currentChat.sectionName;
+                            }
+                            
                             addToHistoryList({
                                 session_id: currentChatId,
                                 chat_header: generatedHeader,
                                 user_id: currentUser.userId,
+                                section_value: currentChat.sectionValue, // NEW: Store section value
                                 created_at: new Date().toISOString()
                             });
                         } else {
@@ -1812,10 +2454,16 @@
                             currentChat.title = fallbackTitle;
                             chatTitle.textContent = fallbackTitle;
                             
+                            // If in a section, show section name as subtitle
+                            if (currentChat.sectionName) {
+                                chatSubtitle.textContent = currentChat.sectionName;
+                            }
+                            
                             addToHistoryList({
                                 session_id: currentChatId,
                                 chat_header: fallbackTitle,
                                 user_id: currentUser.userId,
+                                section_value: currentChat.sectionValue, // NEW: Store section value
                                 created_at: new Date().toISOString()
                             });
                         }
@@ -1830,10 +2478,16 @@
                         currentChat.title = fallbackTitle;
                         chatTitle.textContent = fallbackTitle;
                         
+                        // If in a section, show section name as subtitle
+                        if (currentChat.sectionName) {
+                            chatSubtitle.textContent = currentChat.sectionName;
+                        }
+                        
                         addToHistoryList({
                             session_id: currentChatId,
                             chat_header: fallbackTitle,
                             user_id: currentUser.userId,
+                            section_value: currentChat.sectionValue, // NEW: Store section value
                             created_at: new Date().toISOString()
                         });
                     }
@@ -1877,6 +2531,345 @@
             e.target.style.height = Math.min(e.target.scrollHeight, 200) + 'px';
         });
 
+
+        // Function to update empty state based on section
+        function updateEmptyState(config) {
+            const emptyState = document.getElementById('empty-state');
+            const greetingName = document.getElementById('greeting-name');
+            
+            if (!config) {
+                // Default state - generic welcome
+                emptyState.innerHTML = `
+                    <div class="greeting-container">
+                        <div class="greeting">
+                            <span class="greeting-hello">Hello,</span>
+                            <span class="greeting-name" id="greeting-name">${currentUser ? currentUser.name : 'User'}</span>
+                        </div>
+                        <div class="subtitle">How can I help you today?</div>
+                    </div>
+                    
+                    <div class="suggestion-cards">
+                        <div class="suggestion-card" data-message="What can you help me with?">
+                            <div class="suggestion-card-icon">
+                                <i class="fas fa-lightbulb"></i>
+                            </div>
+                            <div class="suggestion-card-title">Get Started</div>
+                            <div class="suggestion-card-desc">Learn what TETCO Strategy Chat can do for you</div>
+                        </div>
+                        <div class="suggestion-card" data-message="Tell me about your features">
+                            <div class="suggestion-card-icon">
+                                <i class="fas fa-star"></i>
+                            </div>
+                            <div class="suggestion-card-title">Explore Features</div>
+                            <div class="suggestion-card-desc">Discover all available capabilities</div>
+                        </div>
+                        <div class="suggestion-card" data-message="How do I use this chat?">
+                            <div class="suggestion-card-icon">
+                                <i class="fas fa-book-open"></i>
+                            </div>
+                            <div class="suggestion-card-title">How to Use</div>
+                            <div class="suggestion-card-desc">Quick guide to get you started</div>
+                        </div>
+                        <div class="suggestion-card" data-message="What are your capabilities?">
+                            <div class="suggestion-card-icon">
+                                <i class="fas fa-rocket"></i>
+                            </div>
+                            <div class="suggestion-card-title">Capabilities</div>
+                            <div class="suggestion-card-desc">See what's possible with AI</div>
+                        </div>
+                    </div>
+                `;
+            } else {
+                // Section-specific state
+                const cardsHTML = config.cards.map(card => `
+                    <div class="suggestion-card" data-message="${card.message.replace(/"/g, '&quot;')}">
+                        <div class="suggestion-card-icon">
+                            <i class="${card.icon}"></i>
+                        </div>
+                        <div class="suggestion-card-title">${card.title}</div>
+                        <div class="suggestion-card-desc">${card.desc}</div>
+                    </div>
+                `).join('');
+                
+                emptyState.innerHTML = `
+                    <div class="greeting-container">
+                        <div class="greeting">
+                            <span class="greeting-hello">${config.name}</span>
+                        </div>
+                        <div class="subtitle">${config.subtitle}</div>
+                    </div>
+                    
+                    <div class="suggestion-cards">
+                        ${cardsHTML}
+                    </div>
+                `;
+            }
+        }
+
+        // Event delegation for suggestion card clicks
+        document.addEventListener('click', function(e) {
+            const card = e.target.closest('.suggestion-card');
+            if (card && card.hasAttribute('data-message')) {
+                const message = card.getAttribute('data-message');
+                sendQuickMessage(message);
+            }
+        });
+
+        // Section Click Handler
+        async function handleSectionClick(sectionType) {
+            if (!currentUser) {
+                showNotification('Please login first', 'error');
+                return;
+            }
+
+            try {
+                // ENSURE SECTIONS ARE VISIBLE (not collapsed)
+                const sectionsList = document.getElementById('sections-list');
+                const sectionsSectionTitle = document.getElementById('sections-section-title');
+                if (sectionsList && sectionsList.classList.contains('collapsed')) {
+                    sectionsList.classList.remove('collapsed');
+                    sectionsSectionTitle.classList.remove('collapsed');
+                    localStorage.setItem('sectionsCollapsed', 'false');
+                }
+                
+                // Section names and configuration mapping
+                const sectionConfig = {
+                    'goals_kpis': {
+                        name: 'Goals & KPIs',
+                        subtitle: 'Inquire about strategic goals and key performance indicators',
+                        section: 'goals_kpis',
+                        cards: [
+                            {
+                                icon: 'fas fa-lightbulb',
+                                title: 'Understanding Goals & KPIs',
+                                desc: 'Learn about this section and how to use it effectively',
+                                message: 'What can you tell me about the Goals & KPIs section and how can I use it?'
+                            },
+                            {
+                                icon: 'fas fa-bullseye',
+                                title: 'Strategic Goals',
+                                desc: 'Explore our key strategic objectives',
+                                message: 'What are TETCO\'s main strategic goals?'
+                            },
+                            {
+                                icon: 'fas fa-chart-line',
+                                title: 'Performance Metrics',
+                                desc: 'Review key performance indicators',
+                                message: 'What are the most important KPIs we track?'
+                            },
+                            {
+                                icon: 'fas fa-trophy',
+                                title: 'Achievement Status',
+                                desc: 'Check progress on our goals',
+                                message: 'How are we performing against our KPI targets?'
+                            }
+                        ]
+                    },
+                    'timelines': {
+                        name: 'Timelines',
+                        subtitle: 'Ask about project timelines and key milestones',
+                        section: 'timelines',
+                        cards: [
+                            {
+                                icon: 'fas fa-lightbulb',
+                                title: 'Understanding Timelines',
+                                desc: 'Learn about this section and how to use it effectively',
+                                message: 'What can you tell me about the Timelines section and how can I use it?'
+                            },
+                            {
+                                icon: 'fas fa-calendar-alt',
+                                title: 'Project Schedule',
+                                desc: 'View upcoming project milestones',
+                                message: 'What are the key project milestones coming up?'
+                            },
+                            {
+                                icon: 'fas fa-clock',
+                                title: 'Timeline Overview',
+                                desc: 'Get a comprehensive timeline view',
+                                message: 'Can you show me an overview of our project timelines?'
+                            },
+                            {
+                                icon: 'fas fa-flag-checkered',
+                                title: 'Critical Deadlines',
+                                desc: 'Identify important upcoming deadlines',
+                                message: 'What are the critical deadlines we need to meet?'
+                            }
+                        ]
+                    },
+                    'responsibility': {
+                        name: 'Responsibility',
+                        subtitle: 'Learn about roles and team responsibilities',
+                        section: 'responsibility',
+                        cards: [
+                            {
+                                icon: 'fas fa-lightbulb',
+                                title: 'Understanding Responsibility',
+                                desc: 'Learn about this section and how to use it effectively',
+                                message: 'What can you tell me about the Responsibility section and how can I use it?'
+                            },
+                            {
+                                icon: 'fas fa-users',
+                                title: 'Team Structure',
+                                desc: 'Explore our organizational structure',
+                                message: 'How is our team structured and organized?'
+                            },
+                            {
+                                icon: 'fas fa-user-tie',
+                                title: 'Role Assignments',
+                                desc: 'Find out who is responsible for what',
+                                message: 'Who is responsible for which areas of the strategy?'
+                            },
+                            {
+                                icon: 'fas fa-tasks',
+                                title: 'Accountability Matrix',
+                                desc: 'View responsibility assignments',
+                                message: 'Can you show me the responsibility matrix for our projects?'
+                            }
+                        ]
+                    },
+                    'forecasts': {
+                        name: 'Forecasts',
+                        subtitle: 'Explore strategic forecasts and future projections',
+                        section: 'forecasts',
+                        cards: [
+                            {
+                                icon: 'fas fa-lightbulb',
+                                title: 'Understanding Forecasts',
+                                desc: 'Learn about this section and how to use it effectively',
+                                message: 'What can you tell me about the Forecasts section and how can I use it?'
+                            },
+                            {
+                                icon: 'fas fa-forward',
+                                title: 'Future Projections',
+                                desc: 'View our strategic forecasts',
+                                message: 'What are our key projections for the next year?'
+                            },
+                            {
+                                icon: 'fas fa-chart-area',
+                                title: 'Growth Forecast',
+                                desc: 'Explore growth expectations',
+                                message: 'What growth are we forecasting across different areas?'
+                            },
+                            {
+                                icon: 'fas fa-binoculars',
+                                title: 'Market Outlook',
+                                desc: 'Understand market predictions',
+                                message: 'What is our outlook on market conditions and trends?'
+                            }
+                        ]
+                    },
+                    'financials': {
+                        name: 'Financials',
+                        subtitle: 'Discover financial insights and strategic investments',
+                        section: 'financials',
+                        cards: [
+                            {
+                                icon: 'fas fa-lightbulb',
+                                title: 'Understanding Financials',
+                                desc: 'Learn about this section and how to use it effectively',
+                                message: 'What can you tell me about the Financials section and how can I use it?'
+                            },
+                            {
+                                icon: 'fas fa-dollar-sign',
+                                title: 'Budget Overview',
+                                desc: 'Review our financial allocations',
+                                message: 'What is our current budget allocation?'
+                            },
+                            {
+                                icon: 'fas fa-hand-holding-usd',
+                                title: 'Investment Strategy',
+                                desc: 'Explore strategic investments',
+                                message: 'What are our key strategic investments?'
+                            },
+                            {
+                                icon: 'fas fa-file-invoice-dollar',
+                                title: 'Financial Performance',
+                                desc: 'Check financial metrics and results',
+                                message: 'How are we performing financially against targets?'
+                            }
+                        ]
+                    }
+                };
+
+                const config = sectionConfig[sectionType];
+                
+                console.log('Section clicked:', sectionType);
+                
+                // Remove active class from all sections
+                document.querySelectorAll('.section-item').forEach(item => {
+                    item.classList.remove('active');
+                    console.log('Removed active from:', item);
+                });
+                
+                // Add active class to clicked section
+                const clickedSection = document.querySelector(`.section-item[data-section-type="${sectionType}"]`);
+                console.log('Clicked section element:', clickedSection);
+                
+                if (clickedSection) {
+                    clickedSection.classList.add('active');
+                    console.log('Added active class to section:', sectionType);
+                    console.log('Section classes after:', clickedSection.className);
+                    
+                    // Force a visual refresh
+                    clickedSection.style.display = 'none';
+                    clickedSection.offsetHeight; // Trigger reflow
+                    clickedSection.style.display = 'flex';
+                } else {
+                    console.error('Could not find section element with data-section-type:', sectionType);
+                }
+                
+                // Create a new chat with section context (NO webhook call)
+                createNewChat();
+                
+                // Store section value and name in current chat
+                currentChat.sectionValue = config.section;
+                currentChat.sectionName = config.name;
+                
+                // Update chat title (section name) and subtitle (section description)
+                chatTitle.textContent = config.name;
+                chatSubtitle.textContent = config.subtitle;
+                
+                // Update empty state with section-specific content
+                updateEmptyState(config);
+                
+                showNotification(`${config.name} section ready!`, 'success');
+                
+                // Close mobile sidebar if open
+                if (window.innerWidth <= 768) {
+                    sidebar.classList.remove('open');
+                    sidebarOverlay.classList.remove('show');
+                }
+            } catch (error) {
+                console.error('Section click error:', error);
+                showNotification('Failed to open section', 'error');
+            }
+        }
+
+        // Section Event Listeners
+        sectionItems.forEach(sectionItem => {
+            sectionItem.addEventListener('click', async () => {
+                const sectionType = sectionItem.getAttribute('data-section-type');
+                await handleSectionClick(sectionType);
+            });
+        });
+
+        // Collapsible Sections Section
+        sectionsSectionTitle.addEventListener('click', () => {
+            sectionsSectionTitle.classList.toggle('collapsed');
+            sectionsList.classList.toggle('collapsed');
+            
+            // Save state to localStorage
+            const isCollapsed = sectionsList.classList.contains('collapsed');
+            localStorage.setItem('sectionsCollapsed', isCollapsed);
+        });
+
+        // Restore sections section state on load
+        const sectionsCollapsed = localStorage.getItem('sectionsCollapsed') === 'true';
+        if (sectionsCollapsed) {
+            sectionsSectionTitle.classList.add('collapsed');
+            sectionsList.classList.add('collapsed');
+        }
+
         // Mobile menu
         menuBtn.addEventListener('click', () => {
             sidebar.classList.toggle('open');
@@ -1888,8 +2881,40 @@
             sidebarOverlay.classList.remove('show');
         });
 
-        observer.observe(emptyState, { attributes: true });
+        // User Menu Toggle
+        userSection.addEventListener('click', () => {
+            userMenu.classList.toggle('show');
+        });
+
+        // Close user menu when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!userSection.contains(e.target) && !userMenu.contains(e.target)) {
+                userMenu.classList.remove('show');
+            }
+        });
+
+        // Logout
+        logoutBtn.addEventListener('click', () => {
+            currentUser = null;
+            currentChatId = null;
+            currentChat = null;
+            chatHistoryList = [];
+            chatLayout.classList.add('hidden');
+            loginSection.classList.remove('hidden');
+            loginForm.reset();
+            showNotification('Logged out successfully', 'success');
+        });
+
+        // Initialize MutationObserver for empty state
+        const observer = new MutationObserver((mutations) => {
+            mutations.forEach((mutation) => {
+                if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
+                    // Observer detects when empty state visibility changes
+                }
+            });
+        });
+
+        observer.observe(document.getElementById('empty-state'), { attributes: true });
     </script>
 </body>
-
 </html>
